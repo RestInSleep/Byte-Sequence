@@ -142,25 +142,13 @@ ppcbc/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ppcbc.dir/build.make CMakeFiles/ppcbc.dir/build
 .PHONY : ppcbc/fast
 
-#=============================================================================
-# Target rules for targets named err
-
-# Build rule for target.
-err: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 err
-.PHONY : err
-
-# fast build rule for target.
-err/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/err.dir/build.make CMakeFiles/err.dir/build
-.PHONY : err/fast
-
 err.o: err.c.o
 .PHONY : err.o
 
 # target to build an object file
 err.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/err.dir/build.make CMakeFiles/err.dir/err.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ppcbs.dir/build.make CMakeFiles/ppcbs.dir/err.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ppcbc.dir/build.make CMakeFiles/ppcbc.dir/err.c.o
 .PHONY : err.c.o
 
 err.i: err.c.i
@@ -168,7 +156,8 @@ err.i: err.c.i
 
 # target to preprocess a source file
 err.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/err.dir/build.make CMakeFiles/err.dir/err.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ppcbs.dir/build.make CMakeFiles/ppcbs.dir/err.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ppcbc.dir/build.make CMakeFiles/ppcbc.dir/err.c.i
 .PHONY : err.c.i
 
 err.s: err.c.s
@@ -176,7 +165,8 @@ err.s: err.c.s
 
 # target to generate assembly for a file
 err.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/err.dir/build.make CMakeFiles/err.dir/err.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ppcbs.dir/build.make CMakeFiles/ppcbs.dir/err.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ppcbc.dir/build.make CMakeFiles/ppcbc.dir/err.c.s
 .PHONY : err.c.s
 
 ppcbc.o: ppcbc.c.o
@@ -235,7 +225,6 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... err"
 	@echo "... ppcbc"
 	@echo "... ppcbs"
 	@echo "... err.o"

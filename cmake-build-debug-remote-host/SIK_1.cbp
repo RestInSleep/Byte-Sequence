@@ -93,44 +93,6 @@
 					<DistClean command="/usr/bin/gmake -j88 -f &quot;/tmp/tmp.SCEC3Pvim9/cmake-build-debug-remote-host/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
-			<Target title="err">
-				<Option output="/tmp/tmp.SCEC3Pvim9/cmake-build-debug-remote-host/liberr.a" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/tmp/tmp.SCEC3Pvim9/cmake-build-debug-remote-host"/>
-				<Option object_output="./"/>
-				<Option type="2"/>
-				<Option compiler="gcc"/>
-				<Compiler>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/12/include"/>
-					<Add directory="/usr/local/include"/>
-					<Add directory="/usr/include/x86_64-linux-gnu"/>
-					<Add directory="/usr/include"/>
-				</Compiler>
-				<MakeCommands>
-					<Build command="/usr/bin/gmake -j88 -f &quot;/tmp/tmp.SCEC3Pvim9/cmake-build-debug-remote-host/Makefile&quot;  VERBOSE=1 err"/>
-					<CompileFile command="/usr/bin/gmake -j88 -f &quot;/tmp/tmp.SCEC3Pvim9/cmake-build-debug-remote-host/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/gmake -j88 -f &quot;/tmp/tmp.SCEC3Pvim9/cmake-build-debug-remote-host/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/gmake -j88 -f &quot;/tmp/tmp.SCEC3Pvim9/cmake-build-debug-remote-host/Makefile&quot;  VERBOSE=1 clean"/>
-				</MakeCommands>
-			</Target>
-			<Target title="err/fast">
-				<Option output="/tmp/tmp.SCEC3Pvim9/cmake-build-debug-remote-host/liberr.a" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/tmp/tmp.SCEC3Pvim9/cmake-build-debug-remote-host"/>
-				<Option object_output="./"/>
-				<Option type="2"/>
-				<Option compiler="gcc"/>
-				<Compiler>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/12/include"/>
-					<Add directory="/usr/local/include"/>
-					<Add directory="/usr/include/x86_64-linux-gnu"/>
-					<Add directory="/usr/include"/>
-				</Compiler>
-				<MakeCommands>
-					<Build command="/usr/bin/gmake -j88 -f &quot;/tmp/tmp.SCEC3Pvim9/cmake-build-debug-remote-host/Makefile&quot;  VERBOSE=1 err/fast"/>
-					<CompileFile command="/usr/bin/gmake -j88 -f &quot;/tmp/tmp.SCEC3Pvim9/cmake-build-debug-remote-host/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/gmake -j88 -f &quot;/tmp/tmp.SCEC3Pvim9/cmake-build-debug-remote-host/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/gmake -j88 -f &quot;/tmp/tmp.SCEC3Pvim9/cmake-build-debug-remote-host/Makefile&quot;  VERBOSE=1 clean"/>
-				</MakeCommands>
-			</Target>
 			<Target title="edit_cache">
 				<Option working_dir="/tmp/tmp.SCEC3Pvim9/cmake-build-debug-remote-host"/>
 				<Option type="4"/>
@@ -153,10 +115,12 @@
 			</Target>
 		</Build>
 		<Unit filename="/tmp/tmp.SCEC3Pvim9/err.c">
-			<Option target="err"/>
+			<Option target="ppcbs"/>
+			<Option target="ppcbc"/>
 		</Unit>
 		<Unit filename="/tmp/tmp.SCEC3Pvim9/err.h">
-			<Option target="err"/>
+			<Option target="ppcbs"/>
+			<Option target="ppcbc"/>
 		</Unit>
 		<Unit filename="/tmp/tmp.SCEC3Pvim9/ppcbc.c">
 			<Option target="ppcbc"/>

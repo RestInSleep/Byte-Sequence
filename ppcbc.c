@@ -11,10 +11,15 @@
 #include <inttypes.h>
 #include <limits.h>
 #include "err.h"
+#include "packets.h"
 
 
 
 
 int main (int argc, char *argv[]) {
+
+    if (argc != 3) {
+        fatal("usage: %s <protocol ('tcp' / 'udp')> <port>  ...\n", argv[0]);
+    }
 
 }
