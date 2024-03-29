@@ -1,0 +1,3 @@
+/Users/janjagodzinski/CLionProjects/SIK_1/cmake-build-debug/CMakeFiles/SIK_1.dir
+/Users/janjagodzinski/CLionProjects/SIK_1/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/janjagodzinski/CLionProjects/SIK_1/cmake-build-debug/CMakeFiles/rebuild_cache.dir
