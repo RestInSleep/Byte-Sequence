@@ -1,0 +1,1 @@
+/usr/bin/cc CMakeFiles/ppcbc.dir/ppcbc.c.o CMakeFiles/ppcbc.dir/err.c.o -o ppcbc 

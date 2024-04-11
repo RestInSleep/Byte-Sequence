@@ -8,7 +8,7 @@
 
 
 struct  __attribute__ ((__packed__)) metadata {
-    uint8_t type_id;
+    uint8_t packet_type_id; // 1 - conn, 2 - con_acc, 3 - con_rjt, 4 - data, 5 - acc, 6 - rjt, 7 - rcvd
     uint64_t session_id;
 };
 

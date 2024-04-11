@@ -16,8 +16,10 @@
 #include "err.h"
 #include "packets.h"
 
-#define BUFFER_SIZE 30000
-uint16_t read_protocol(char *input) {
+#define BUFFER_SIZE 64000
+
+
+static uint16_t read_protocol(char *input) {
     if (strcmp(input, "tcp") == 0) {
         return 1;
     } else if (strcmp(input, "udp") == 0) {
@@ -28,7 +30,7 @@ uint16_t read_protocol(char *input) {
 }
 
 static uint16_t read_port(char const *string) {
-    char *endptr;
+    char* endptr;
     unsigned long port = strtoul(string, &endptr, 10);
     if ((port == ULONG_MAX && errno == ERANGE) || *endptr != 0 || port == 0 || port > UINT16_MAX) {
         fatal("%s is not a valid port number", string);
@@ -36,76 +38,124 @@ static uint16_t read_port(char const *string) {
     return (uint16_t) port;
 }
 
-static void udp_server(uint16_t port) {
+static void tcp_server(uint16_t port) {
+    int socket_fd = socket(AF_INET, SOCK_STREAM, 0);
+
+
+}
+
+int receive_conn(char* buffer, int socket_fd, struct conn* connection, struct sockaddr_in* client_address) {
+    ssize_t received_length;
+    int flags = 0;
+    socklen_t address_length = (socklen_t) sizeof(&client_address);
+    received_length = recvfrom(socket_fd, buffer, BUFFER_SIZE, flags,
+                               (struct sockaddr *) client_address, &address_length);
+    if (received_length < 0) {
+        syserr("recvfrom");
+    }
+    if (received_length != sizeof(struct conn)) {
+        fprintf(stderr, "received_length != sizeof(struct conn)");
+        return 0;
+    }
+    memcpy(connection, buffer, sizeof(struct conn));
+    if (connection->meta.packet_type_id != 1) {
+        fprintf(stderr, "server expects connection packet first!\n");
+        return 0;
+    }
+    if (connection->protocol_id == 1) {
+        fprintf(stderr, "incoming tcp connection to udp server!\n");
+        return 0;
+    }
+    if (connection->protocol_id != 2 && connection->protocol_id != 3) {
+        fprintf(stderr, "unknown connection to udp server!\n");
+        return 0;
+    }
+    return 1;
+}
+
+
+static void udp_server_no_retransmit_recv(uint64_t session_id, struct sockaddr_in client_address,
+        uint64_t sequence_length, int socket_fd, char *buffer) {
+    struct con_acc con_acc;
+    con_acc.meta.packet_type_id = 2;
+    con_acc.meta.session_id = htobe64(session_id);
+    char const *client_ip = inet_ntoa(client_address.sin_addr);
+    uint16_t client_port = ntohs(client_address.sin_port);
+    int flags = 0;
+    ssize_t sent = sendto(socket_fd, &con_acc, sizeof(struct con_acc), flags,
+                          (struct sockaddr *) &client_address, (socklen_t) sizeof(client_address));
+
+
+
+
+}
+
+static void udp_server_retransmit_recv(uint64_t session_id, struct sockaddr_in client_address,
+        uint64_t sequence_length, int socket_fd, char *buffer) {
+
+}
+
+
+static void udp_server_run(uint16_t port) {
     int socket_fd = socket(AF_INET, SOCK_DGRAM, 0);
     if (socket_fd < 0) {
         syserr("cannot create a socket");
     }
 
     struct sockaddr_in server_address;
-    server_address.sin_family = AF_INET;
-    server_address.sin_addr.s_addr = htonl(INADDR_ANY);
+    server_address.sin_family = AF_INET; // IPv4
+    server_address.sin_addr.s_addr = htonl(INADDR_ANY); // Listening on all interfaces.
     server_address.sin_port = htons(port);
 
     if (bind(socket_fd, (struct sockaddr *) &server_address, (socklen_t) sizeof(server_address)) < 0) {
         syserr("bind");
     }
-    //to delete
+    //TODO: delete
     printf("listening on port %" PRIu16 "\n", port);
     char buffer[BUFFER_SIZE];
-    ssize_t received_length;
+
 
     while (true) {
-        memset(buffer, 0, sizeof(buffer));
-        int flags = 0;
+
+        struct conn connection;
         struct sockaddr_in client_address;
-        socklen_t address_length = (socklen_t) sizeof(client_address);
-        received_length = recvfrom(socket_fd, buffer, BUFFER_SIZE, flags,
-                                   (struct sockaddr *) &client_address, &address_length);
-        if (received_length < 0) {
-            syserr("recvfrom");
-        }
-        if (received_length != sizeof(struct conn)) {
-            fatal("received_length != sizeof(struct conn)");
-        }
-        struct conn * connection;
-        memcpy(connection, buffer, sizeof(struct conn));
-        if (connection->meta.type_id != 1) {
-            fprintf(stderr, "udp server is not connected!\n");
+        uint64_t sequence_length = be64toh(connection.net_sequence_length);
+        if (!receive_conn(buffer, socket_fd, &connection, &client_address)){
             continue;
         }
-        if (connection->protocol_id == 1) {
-            fprintf(stderr, "incoming tcp connection to udp server!\n");
-            continue;
+        uint64_t session_id = be64toh(connection.meta.session_id);
+        uint8_t protocol_id = connection.protocol_id;
+        if (protocol_id == 2) {
+            udp_server_no_retransmit_recv(session_id, client_address, sequence_length, socket_fd, buffer);
         }
+        else if (protocol_id == 3) {
+            udp_server_retransmit_recv(session_id, client_address, sequence_length, socket_fd, buffer);
+        }
+
 
 
 
 
     }
 
-    ssize_t received_length;
-    do {
-        static char buffer[10];
-        memset(buffer, 0, sizeof(buffer));
 
-        int flags = 0;
-        struct sockaddr_in client_address;
-        socklen_t address_length = (socklen_t) sizeof(client_address);
 
-        received_length = recvfrom(socket_fd, buffer, 10, flags,
-                                   (struct sockaddr *) &client_address, &address_length);
-        if (received_length < 0) {
-            syserr("error on datagram from client socket");
-        }
-
-        printf("received message: %s\n", buffer);
-    } while (received_length >= 0);
 
     if (close(socket_fd) < 0) {
         syserr("close");
     }
+
 }
+void run_server(int protocol_type, uint16_t port) {
+    if (protocol_type == 1) {
+        tcp_server(port);
+    }
+    if (protocol_type == 2) {
+        udp_server_run(port);
+    }
+    // read_protocol ensures that protocol_type is either 1 or 2
+}
+
 
 int main (int argc, char *argv[]) {
     if (argc != 3) {
@@ -113,12 +163,5 @@ int main (int argc, char *argv[]) {
     }
     int protocol_type = read_protocol(argv[1]); // 1- tcp, 2 - udp
     uint16_t port = read_port(argv[2]);
-    if (protocol_type == 1) {
-
-    }
-    else {
-
-    }
-
-
+    run_server(protocol_type, port);
 }

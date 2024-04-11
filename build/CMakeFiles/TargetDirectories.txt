@@ -1,0 +1,4 @@
+/home/jan/katalog/SIK/projekt1/build/CMakeFiles/ppcbs.dir
+/home/jan/katalog/SIK/projekt1/build/CMakeFiles/ppcbc.dir
+/home/jan/katalog/SIK/projekt1/build/CMakeFiles/edit_cache.dir
+/home/jan/katalog/SIK/projekt1/build/CMakeFiles/rebuild_cache.dir

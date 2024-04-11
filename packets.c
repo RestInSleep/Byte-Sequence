@@ -10,7 +10,7 @@ struct conn * create_conn(uint8_t protocol_id, uint64_t net_sequence_length, uin
     if (conn == NULL) {
         return NULL;
     }
-    conn->meta.type_id = 1;
+    conn->meta.packet_type_id = 1;
     conn->meta.session_id = session_id;
     conn->protocol_id = protocol_id;
     conn->net_sequence_length = net_sequence_length;
