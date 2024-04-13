@@ -1,10 +1,11 @@
 //
-// Created by Jan Jagodziński on 29/03/2024.
+// initd by Jan Jagodziński on 29/03/2024.
 //
 
 #ifndef SIK_1_PACKETS_H
 #define SIK_1_PACKETS_H
 #include <inttypes.h>
+#include <err.h>
 
 
 struct  __attribute__ ((__packed__)) metadata {
@@ -47,13 +48,13 @@ struct  __attribute__ ((__packed__)) rcvd {
     struct metadata meta;
 };
 
-struct conn * create_conn(uint8_t protocol_id, uint64_t net_sequence_length, uint64_t session_id);
-struct con_acc * create_con_acc(uint64_t session_id);
-struct con_rjt * create_con_rjt(uint64_t session_id);
-struct data * create_data(uint64_t net_packet_number, uint32_t net_packet_bytes, char *data, uint64_t session_id);
-struct acc * create_acc(uint64_t net_packet_number, uint64_t session_id);
-struct rjt * create_rjt(uint64_t net_packet_number, uint64_t session_id);
-struct rcvd * create_rcvd(uint64_t session_id);
+void init_conn(struct conn* conn, uint8_t protocol_id, uint64_t net_sequence_length);
+void init_con_acc(struct con_acc* con_acc, uint64_t session_id);
+void init_con_rjt(struct con_rjt* con_rjt, uint64_t session_id);
+void init_data(struct data* data, uint64_t net_packet_number, uint32_t net_packet_bytes, char* buffer, uint64_t session_id);
+void init_acc(struct acc* acc, uint64_t net_packet_number, uint64_t session_id);
+void init_rjt(struct rjt* rjt, uint64_t net_packet_number, uint64_t session_id);
+void init_rcvd(struct rcvd* rcvd, uint64_t session_id);
 
 
 #endif //SIK_1_PACKETS_H
