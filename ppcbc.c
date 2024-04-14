@@ -16,23 +16,13 @@
 
 
 uint64_t generate_session_id() {
-
-}
-
-
-#define BUFFER_SIZE 20
-
-static uint16_t read_protocol(char *input) {
-    if (strcmp(input, "tcp") == 0) {
-        return 1;
-    } else if (strcmp(input, "udp") == 0) {
-        return 2;
-    } else if (strcmp(input, "udpr") == 0) {
-        return 3;
-    } else {
-        fatal("usage: %s <protocol ('tcp' / 'udp' / 'udpr')> <port>\n", "ppcbs");
+    uint64_t result = 0;
+    for(int i = 0; i < 8; i++) {
+        result = (result << 8) | (rand() & 0xFF);
     }
+    return result;
 }
+
 
 
 static uint16_t read_port(char const *string) {
@@ -68,26 +58,88 @@ static struct sockaddr_in get_server_address(char const *host, uint16_t port) {
 
     return send_address;
 }
-int main (int argc, char *argv[]) {
-    srand(time(NULL));
-    if (argc != 4) {
-        fatal("usage: %s <protocol ('tcp' / 'udp')> <host> <port>  ...\n", argv[0]);
-    }
-    char const * host = argv[2];
-    uint16_t port = read_port(argv[2]);
+void run_client_udp(char const * host, uint16_t port) {
     struct sockaddr_in server_address = get_server_address(host, port);
     char const *server_ip = inet_ntoa(server_address.sin_addr);
     uint16_t server_port = ntohs(server_address.sin_port);
 
-
-    // Create a socket.
     int socket_fd = socket(AF_INET, SOCK_DGRAM, 0);
     if (socket_fd < 0) {
         syserr("cannot create a socket");
     }
     struct conn connection;
+    uint64_t session_id = generate_session_id();
+    printf("session_id: %" PRIu64 "\n", session_id);
+    init_conn(&connection, 2, 1, session_id);
+    ssize_t sent_length = sendto(socket_fd, &connection, sizeof(connection), 0,
+                                 (struct sockaddr *) &server_address, sizeof(server_address));
+    if (sent_length < 0){
+        syserr("sendto");
+    }
+    if (sent_length != sizeof(connection)) {
+        fatal("partial / failed write");
+    }
+    struct con_acc con_acc;
+
+    ssize_t received_length = recvfrom(socket_fd, &con_acc, sizeof(con_acc), 0, NULL, NULL);
+    if(received_length < 0) {
+        syserr("recvfrom");
+    }
+    if(received_length != sizeof(con_acc)) {
+        fatal("partial / failed read");
+    }
+    if (con_acc.meta.packet_type_id != 2) {
+        fatal("expected con_acc packet");
+    }
+    if (con_acc.meta.session_id != connection.meta.session_id) {
+        fatal("session_id mismatch");
+    }
+    printf("received con_acc packet\n");
 
 
+}
+void run_client_udpr(char const* host, uint16_t port) {
+
+}
+
+void run_client_tcp(char const* host, uint16_t port) {
+
+}
+
+
+void run_client(uint8_t protocol_type, char const* host, uint16_t port) {
+    if (protocol_type == 1) {
+        run_client_tcp(host, port);
+    } else if (protocol_type == 2) {
+        run_client_udp(host, port);
+    } else if (protocol_type == 3) {
+        run_client_udpr(host, port);
+    } else {
+        fatal("unknown protocol type");
+    }
+}
+
+char* read_data() {
+    char* buffer = malloc(1024);
+    uint64_t free_space = 1024;
+    uint64_t read_bytes = 0;
+
+}
+
+
+
+int main (int argc, char *argv[]) {
+    srand(time(NULL));
+    if (argc != 4) {
+        fatal("usage: %s <protocol ('tcp' / 'udp')> <host> <port>  ...\n", argv[0]);
+    }
+
+    run_client(read_protocol(argv[1]), argv[2], read_port(argv[3]));
+
+
+    //TODO read input
+
+    // Create a socket.
 
 
 }

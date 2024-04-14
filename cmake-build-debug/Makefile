@@ -169,6 +169,33 @@ err.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ppcbc.dir/build.make CMakeFiles/ppcbc.dir/err.c.s
 .PHONY : err.c.s
 
+packets.o: packets.c.o
+.PHONY : packets.o
+
+# target to build an object file
+packets.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ppcbs.dir/build.make CMakeFiles/ppcbs.dir/packets.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ppcbc.dir/build.make CMakeFiles/ppcbc.dir/packets.c.o
+.PHONY : packets.c.o
+
+packets.i: packets.c.i
+.PHONY : packets.i
+
+# target to preprocess a source file
+packets.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ppcbs.dir/build.make CMakeFiles/ppcbs.dir/packets.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ppcbc.dir/build.make CMakeFiles/ppcbc.dir/packets.c.i
+.PHONY : packets.c.i
+
+packets.s: packets.c.s
+.PHONY : packets.s
+
+# target to generate assembly for a file
+packets.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ppcbs.dir/build.make CMakeFiles/ppcbs.dir/packets.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ppcbc.dir/build.make CMakeFiles/ppcbc.dir/packets.c.s
+.PHONY : packets.c.s
+
 ppcbc.o: ppcbc.c.o
 .PHONY : ppcbc.o
 
@@ -230,6 +257,9 @@ help:
 	@echo "... err.o"
 	@echo "... err.i"
 	@echo "... err.s"
+	@echo "... packets.o"
+	@echo "... packets.i"
+	@echo "... packets.s"
 	@echo "... ppcbc.o"
 	@echo "... ppcbc.i"
 	@echo "... ppcbc.s"

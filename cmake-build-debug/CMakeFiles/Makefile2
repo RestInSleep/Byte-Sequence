@@ -83,12 +83,12 @@ clean: CMakeFiles/ppcbc.dir/clean
 CMakeFiles/ppcbs.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ppcbs.dir/build.make CMakeFiles/ppcbs.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ppcbs.dir/build.make CMakeFiles/ppcbs.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/jan/katalog/SIK/projekt1/cmake-build-debug/CMakeFiles --progress-num=4,5,6 "Built target ppcbs"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/jan/katalog/SIK/projekt1/cmake-build-debug/CMakeFiles --progress-num=5,6,7,8 "Built target ppcbs"
 .PHONY : CMakeFiles/ppcbs.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/ppcbs.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/jan/katalog/SIK/projekt1/cmake-build-debug/CMakeFiles 3
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/jan/katalog/SIK/projekt1/cmake-build-debug/CMakeFiles 4
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/ppcbs.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/jan/katalog/SIK/projekt1/cmake-build-debug/CMakeFiles 0
 .PHONY : CMakeFiles/ppcbs.dir/rule
@@ -109,12 +109,12 @@ CMakeFiles/ppcbs.dir/clean:
 CMakeFiles/ppcbc.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ppcbc.dir/build.make CMakeFiles/ppcbc.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ppcbc.dir/build.make CMakeFiles/ppcbc.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/jan/katalog/SIK/projekt1/cmake-build-debug/CMakeFiles --progress-num=1,2,3 "Built target ppcbc"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/jan/katalog/SIK/projekt1/cmake-build-debug/CMakeFiles --progress-num=1,2,3,4 "Built target ppcbc"
 .PHONY : CMakeFiles/ppcbc.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/ppcbc.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/jan/katalog/SIK/projekt1/cmake-build-debug/CMakeFiles 3
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/jan/katalog/SIK/projekt1/cmake-build-debug/CMakeFiles 4
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/ppcbc.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/jan/katalog/SIK/projekt1/cmake-build-debug/CMakeFiles 0
 .PHONY : CMakeFiles/ppcbc.dir/rule

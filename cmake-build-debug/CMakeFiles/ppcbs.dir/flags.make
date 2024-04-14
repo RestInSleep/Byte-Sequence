@@ -6,5 +6,5 @@ C_DEFINES =
 
 C_INCLUDES = 
 
-C_FLAGS = -g -fdiagnostics-color=always
+C_FLAGS = -g -fdiagnostics-color=always -Wall -Wextra -O2
 

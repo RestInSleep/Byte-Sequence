@@ -122,6 +122,14 @@
 			<Option target="ppcbs"/>
 			<Option target="ppcbc"/>
 		</Unit>
+		<Unit filename="/home/jan/katalog/SIK/projekt1/packets.c">
+			<Option target="ppcbs"/>
+			<Option target="ppcbc"/>
+		</Unit>
+		<Unit filename="/home/jan/katalog/SIK/projekt1/packets.h">
+			<Option target="ppcbs"/>
+			<Option target="ppcbc"/>
+		</Unit>
 		<Unit filename="/home/jan/katalog/SIK/projekt1/ppcbc.c">
 			<Option target="ppcbc"/>
 		</Unit>

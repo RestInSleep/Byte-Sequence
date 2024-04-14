@@ -19,15 +19,7 @@
 #define BUFFER_SIZE 64000
 
 
-static uint16_t read_protocol(char *input) {
-    if (strcmp(input, "tcp") == 0) {
-        return 1;
-    } else if (strcmp(input, "udp") == 0) {
-        return 2;
-    } else {
-        fatal("usage: %s <protocol ('tcp' / 'udp')> <port>\n", "ppcbs");
-    }
-}
+
 
 static uint16_t read_port(char const *string) {
     char *endptr;
@@ -38,13 +30,13 @@ static uint16_t read_port(char const *string) {
     return (uint16_t) port;
 }
 
-static void tcp_server(uint16_t port) {
+static void tcp_server_run(uint16_t port) {
     int socket_fd = socket(AF_INET, SOCK_STREAM, 0);
 
 
 }
 
-int receive_conn(char *buffer, int socket_fd, struct conn *connection, struct sockaddr_in *client_address) {
+int udp_receive_conn(char *buffer, int socket_fd, struct conn *connection, struct sockaddr_in *client_address) {
     ssize_t received_length;
     int flags = 0;
     socklen_t address_length = (socklen_t) sizeof(&client_address);
@@ -90,41 +82,41 @@ static void udp_server_no_retransmit_recv(uint64_t session_id, struct sockaddr_i
     }
     uint64_t currently_received = 0;
     struct sockaddr_in  incoming_address;
-    while (currently_received < sequence_length) {
-        ssize_t received_length;
-        socklen_t address_length = (socklen_t) sizeof(incoming_address);
-        received_length = recvfrom(socket_fd, buffer, BUFFER_SIZE, flags,
-                                   (struct sockaddr *) &incoming_address, &address_length);
-        if (received_length < 0) {
-            fprintf(stderr, "recvfrom failed\n");
-            return;
-        }
-        if()
-        struct data *data = (struct data *) buffer;
-        if (data->meta.packet_type_id != 4) {
-            fprintf(stderr, "server expects data packet!\n");
-            return;
-        }
-        if (data->meta.session_id != session_id) {
-            fprintf(stderr, "server expects data packet with correct session_id!\n");
-            return;
-        }
-        if (data->net_packet_number != currently_received) {
-            fprintf(stderr, "server expects data packet with correct net_packet_number!\n");
-            return;
-        }
-        currently_received += data->net_packet_bytes;
-        struct acc acc;
-        acc.meta.packet_type_id = 5;
-        acc.meta.session_id = htobe64(session_id);
-        acc.net_packet_number = htobe64(data->net_packet_number);
-        sent = sendto(socket_fd, &acc, sizeof(struct acc), flags,
-                      (struct sockaddr *) &client_address, (socklen_t) sizeof(client_address));
-        if (sent < 0) {
-            fprintf(stderr, "sendto failed\n");
-            return;
-        }
-    }
+//    while (currently_received < sequence_length) {
+//        ssize_t received_length;
+//        socklen_t address_length = (socklen_t) sizeof(incoming_address);
+//        received_length = recvfrom(socket_fd, buffer, BUFFER_SIZE, flags,
+//                                   (struct sockaddr *) &incoming_address, &address_length);
+//        if (received_length < 0) {
+//            fprintf(stderr, "recvfrom failed\n");
+//            return;
+//        }
+//        if()
+//        struct data *data = (struct data *) buffer;
+//        if (data->meta.packet_type_id != 4) {
+//            fprintf(stderr, "server expects data packet!\n");
+//            return;
+//        }
+//        if (data->meta.session_id != session_id) {
+//            fprintf(stderr, "server expects data packet with correct session_id!\n");
+//            return;
+//        }
+//        if (data->net_packet_number != currently_received) {
+//            fprintf(stderr, "server expects data packet with correct net_packet_number!\n");
+//            return;
+//        }
+//        currently_received += data->net_packet_bytes;
+//        struct acc acc;
+//        acc.meta.packet_type_id = 5;
+//        acc.meta.session_id = htobe64(session_id);
+//        acc.net_packet_number = htobe64(data->net_packet_number);
+//        sent = sendto(socket_fd, &acc, sizeof(struct acc), flags,
+//                      (struct sockaddr *) &client_address, (socklen_t) sizeof(client_address));
+//        if (sent < 0) {
+//            fprintf(stderr, "sendto failed\n");
+//            return;
+//        }
+//    }
 }
 
 
@@ -152,17 +144,16 @@ static void udp_server_run(uint16_t port) {
     printf("listening on port %" PRIu16 "\n", port);
     char buffer[BUFFER_SIZE];
 
-
     while (true) {
-
         struct conn connection;
         struct sockaddr_in client_address;
-        uint64_t sequence_length = be64toh(connection.net_sequence_length);
-        if (!receive_conn(buffer, socket_fd, &connection, &client_address)) {
+        if (!udp_receive_conn(buffer, socket_fd, &connection, &client_address)) {
             continue;
         }
         uint64_t session_id = be64toh(connection.meta.session_id);
+        uint64_t sequence_length = be64toh(connection.net_sequence_length);
         uint8_t protocol_id = connection.protocol_id;
+        printf("received connection packet with session id %" PRIu64 "\n", session_id);
 
         if (protocol_id == 2) {
             udp_server_no_retransmit_recv(session_id, &client_address, sequence_length, socket_fd, buffer);
@@ -178,9 +169,9 @@ static void udp_server_run(uint16_t port) {
 
 }
 
-void run_server(int protocol_type, uint16_t port) {
+void run_server(uint8_t protocol_type, uint16_t port) {
     if (protocol_type == 1) {
-        tcp_server(port);
+        tcp_server_run(port);
     }
     if (protocol_type == 2) {
         udp_server_run(port);
@@ -193,7 +184,5 @@ int main(int argc, char *argv[]) {
     if (argc != 3) {
         fatal("usage: %s <protocol ('tcp' / 'udp')> <port>\n", argv[0]);
     }
-    int protocol_type = read_protocol(argv[1]); // 1- tcp, 2 - udp
-    uint16_t port = read_port(argv[2]);
-    run_server(protocol_type, port);
+    run_server(read_protocol(argv[1]), read_port(argv[2]));
 }
