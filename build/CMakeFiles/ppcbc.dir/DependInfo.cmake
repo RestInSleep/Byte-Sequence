@@ -9,6 +9,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/jan/katalog/SIK/projekt1/err.c" "CMakeFiles/ppcbc.dir/err.c.o" "gcc" "CMakeFiles/ppcbc.dir/err.c.o.d"
+  "/home/jan/katalog/SIK/projekt1/packets.c" "CMakeFiles/ppcbc.dir/packets.c.o" "gcc" "CMakeFiles/ppcbc.dir/packets.c.o.d"
   "/home/jan/katalog/SIK/projekt1/ppcbc.c" "CMakeFiles/ppcbc.dir/ppcbc.c.o" "gcc" "CMakeFiles/ppcbc.dir/ppcbc.c.o.d"
   )
 
