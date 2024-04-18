@@ -14,10 +14,41 @@
 #include "err.h"
 #include "packets.h"
 
+char* read_data(size_t* full_size) {
+    size_t buffer_size = 1024;
+    char* buffer = malloc(buffer_size);
+    size_t free_space = 1024;
+    size_t currently_read = 0;
+    while (1) {
+        ssize_t bytes_read = read(STDIN_FILENO, buffer + currently_read, free_space);
+        if (bytes_read < 0) {
+            syserr("read");
+        }
+        if (bytes_read == 0) {
+            break;
+        }
+        currently_read += bytes_read;
+        free_space -= bytes_read;
+        if (free_space == 0) {
+            char * temp = buffer;
+            buffer = realloc(buffer, 2 * buffer_size);
+            buffer_size = 2 * buffer_size;
+            if (buffer == NULL) {
+                free(temp);
+                fatal("realloc");
+            }
+            free_space = buffer_size - currently_read;
+        }
+    }
+    *full_size = currently_read;
+    return buffer;
+}
+
+
 
 uint64_t generate_session_id() {
     uint64_t result = 0;
-    for(int i = 0; i < 8; i++) {
+    for (int i = 0; i < 8; i++) {
         result = (result << 8) | (rand() & 0xFF);
     }
     return result;
@@ -58,7 +89,7 @@ static struct sockaddr_in get_server_address(char const *host, uint16_t port) {
 
     return send_address;
 }
-void run_client_udp(char const * host, uint16_t port) {
+void run_client_udp(char const * host, uint16_t port, char* buffer, size_t full_size) {
     struct sockaddr_in server_address = get_server_address(host, port);
     char const *server_ip = inet_ntoa(server_address.sin_addr);
     uint16_t server_port = ntohs(server_address.sin_port);
@@ -69,11 +100,11 @@ void run_client_udp(char const * host, uint16_t port) {
     }
     struct conn connection;
     uint64_t session_id = generate_session_id();
-    printf("session_id: %" PRIu64 "\n", session_id);
-    init_conn(&connection, 2, 1, session_id);
+    //printf("session_id: %" PRIu64 "\n", session_id);
+    init_conn(&connection, 2, full_size, session_id);
     ssize_t sent_length = sendto(socket_fd, &connection, sizeof(connection), 0,
                                  (struct sockaddr *) &server_address, sizeof(server_address));
-    if (sent_length < 0){
+    if (sent_length < 0) {
         syserr("sendto");
     }
     if (sent_length != sizeof(connection)) {
@@ -89,44 +120,59 @@ void run_client_udp(char const * host, uint16_t port) {
         fatal("partial / failed read");
     }
     if (con_acc.meta.packet_type_id != 2) {
-        fatal("expected con_acc packet");
+        if (con_acc.meta.packet_type_id == 3) {
+            fatal("connection got rejected!");
+        }
+        fatal("expected con_acc packet or con_rjt packet");
     }
     if (con_acc.meta.session_id != connection.meta.session_id) {
         fatal("session_id mismatch");
     }
-    printf("received con_acc packet\n");
+    //printf("received con_acc packet\n");
+    size_t sent_by_now = 0;
+    uint64_t sequence_number = 0;
+    while (sent_by_now < full_size) {
+        struct data data_pckt;
+        size_t to_send_in_this_packet = full_size - sent_by_now >= MAX_PACKET_SIZE ? MAX_PACKET_SIZE : full_size - sent_by_now;
+        init_data(&data_pckt, sequence_number, to_send_in_this_packet, buffer + sent_by_now, session_id);
+        sent_length = sendto(socket_fd, &data_pckt, sizeof(struct data), 0,
+                             (struct sockaddr *) &server_address, sizeof(server_address));
+        if (sent_length < 0) {
+            syserr("sendto");
+        }
+        if (sent_length != sizeof(struct data)) {
+            fatal("partial / failed write");
+        }
+        sequence_number++;
+        sent_by_now += to_send_in_this_packet;
+        fprintf(stderr, "sent %ld bytes\n", sent_by_now);
+        usleep(5000);
+    }
 
 
 }
-void run_client_udpr(char const* host, uint16_t port) {
+void run_client_udpr(char const* host, uint16_t port, char* buffer, size_t full_size) {
 
 }
 
-void run_client_tcp(char const* host, uint16_t port) {
+void run_client_tcp(char const* host, uint16_t port, char* buffer, size_t full_size) {
 
 }
 
 
 void run_client(uint8_t protocol_type, char const* host, uint16_t port) {
+    size_t full_size;
+   char* buffer = read_data(&full_size);
     if (protocol_type == 1) {
-        run_client_tcp(host, port);
+        run_client_tcp(host, port, buffer, full_size);
     } else if (protocol_type == 2) {
-        run_client_udp(host, port);
+        run_client_udp(host, port, buffer, full_size);
     } else if (protocol_type == 3) {
-        run_client_udpr(host, port);
+        run_client_udpr(host, port, buffer, full_size);
     } else {
         fatal("unknown protocol type");
     }
 }
-
-char* read_data() {
-    char* buffer = malloc(1024);
-    uint64_t free_space = 1024;
-    uint64_t read_bytes = 0;
-
-}
-
-
 
 int main (int argc, char *argv[]) {
     srand(time(NULL));
@@ -140,6 +186,5 @@ int main (int argc, char *argv[]) {
     //TODO read input
 
     // Create a socket.
-
 
 }

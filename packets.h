@@ -7,6 +7,8 @@
 #include <inttypes.h>
 #include <err.h>
 
+#define MAX_PACKET_SIZE 64000
+
 
 struct  __attribute__ ((__packed__)) metadata {
     uint8_t packet_type_id; // 1 - conn, 2 - con_acc, 3 - con_rjt, 4 - data, 5 - acc, 6 - rjt, 7 - rcvd

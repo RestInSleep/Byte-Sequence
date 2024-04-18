@@ -49,8 +49,6 @@ char pop_back(struct vector* vec) {
 
 
 
-
-
 void init_conn(struct conn* conn, uint8_t protocol_id, uint64_t net_sequence_length, uint64_t session_id) {
     if (conn == NULL) {
         fatal("conn is NULL");
@@ -75,6 +73,35 @@ void init_con_rjt(struct con_rjt* con_rjt, uint64_t session_id) {
     }
     con_rjt->meta.packet_type_id = 3;
     con_rjt->meta.session_id = htobe64(session_id);
+}
+
+void init_data(struct data* data, uint64_t net_packet_number, uint32_t net_packet_bytes, char* buffer, uint64_t session_id) {
+    if (data == NULL) {
+        fatal("data is NULL");
+    }
+    data->meta.packet_type_id = 4;
+    data->meta.session_id = htobe64(session_id);
+    data->net_packet_number = htobe64(net_packet_number);
+    data->net_packet_bytes = htobe32(net_packet_bytes);
+    memcpy(data->data, buffer, net_packet_bytes);
+}
+
+void init_acc(struct acc* acc, uint64_t net_packet_number, uint64_t session_id) {
+    if (acc == NULL) {
+        fatal("acc is NULL");
+    }
+    acc->meta.packet_type_id = 5;
+    acc->meta.session_id = htobe64(session_id);
+    acc->net_packet_number = htobe64(net_packet_number);
+}
+
+void init_rjt(struct rjt* rjt, uint64_t net_packet_number, uint64_t session_id) {
+    if (rjt == NULL) {
+        fatal("rjt is NULL");
+    }
+    rjt->meta.packet_type_id = 6;
+    rjt->meta.session_id = htobe64(session_id);
+    rjt->net_packet_number = htobe64(net_packet_number);
 }
 
 uint8_t read_protocol(char *input) {
