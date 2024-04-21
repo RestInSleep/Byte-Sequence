@@ -2,13 +2,11 @@
 // initd by Jan Jagodziński on 29/03/2024.
 //
 
-#ifndef SIK_1_PACKETS_H
-#define SIK_1_PACKETS_H
+#ifndef SIK_1_COMMON_H
+#define SIK_1_COMMON_H
+
 #include <inttypes.h>
-#include <err.h>
-#include <errno.h>
-#include <string.h>
-#include <stdlib.h>
+
 
 #define MAX_PACKET_SIZE 64000
 
@@ -61,6 +59,6 @@ void init_acc(struct acc* acc, uint64_t net_packet_number, uint64_t session_id);
 void init_rjt(struct rjt* rjt, uint64_t net_packet_number, uint64_t session_id);
 void init_rcvd(struct rcvd* rcvd, uint64_t session_id);
 uint8_t read_protocol(char *input);
+uint16_t read_port(char const *string);
 
-
-#endif //SIK_1_PACKETS_H
+#endif //SIK_1_COMMON_H

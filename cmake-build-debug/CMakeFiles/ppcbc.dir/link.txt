@@ -1,1 +1,1 @@
-/usr/bin/gcc -g CMakeFiles/ppcbc.dir/ppcbc.c.o CMakeFiles/ppcbc.dir/err.c.o CMakeFiles/ppcbc.dir/packets.c.o -o ppcbc 
+/usr/bin/gcc -g CMakeFiles/ppcbc.dir/ppcbc.c.o CMakeFiles/ppcbc.dir/err.c.o CMakeFiles/ppcbc.dir/common.c.o -o ppcbc 

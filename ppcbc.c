@@ -12,7 +12,7 @@
 #include <limits.h>
 #include <time.h>
 #include "err.h"
-#include "packets.h"
+#include "common.h"
 
 char* read_data(size_t* full_size) {
     size_t data_to_send_size = 1024;
@@ -90,6 +90,7 @@ void udp_recv_con_acc(int socket_fd, uint64_t session_id) {
 
 void udp_send_data_packet(size_t* sent_by_now, size_t full_size, int socket_fd, struct sockaddr_in *server_address, uint64_t session_id,
              uint64_t *sequence_number, char* data_to_send) {
+   sleep(3);
     size_t to_send_in_this_packet = full_size - *sent_by_now >= MAX_PACKET_SIZE ? MAX_PACKET_SIZE : full_size - *sent_by_now;
     struct data * data_packet = malloc(sizeof(struct data) + to_send_in_this_packet);
     init_data(data_packet, *sequence_number, to_send_in_this_packet, data_to_send + *sent_by_now, session_id);

@@ -142,6 +142,33 @@ ppcbc/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ppcbc.dir/build.make CMakeFiles/ppcbc.dir/build
 .PHONY : ppcbc/fast
 
+common.o: common.c.o
+.PHONY : common.o
+
+# target to build an object file
+common.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ppcbs.dir/build.make CMakeFiles/ppcbs.dir/common.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ppcbc.dir/build.make CMakeFiles/ppcbc.dir/common.c.o
+.PHONY : common.c.o
+
+common.i: common.c.i
+.PHONY : common.i
+
+# target to preprocess a source file
+common.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ppcbs.dir/build.make CMakeFiles/ppcbs.dir/common.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ppcbc.dir/build.make CMakeFiles/ppcbc.dir/common.c.i
+.PHONY : common.c.i
+
+common.s: common.c.s
+.PHONY : common.s
+
+# target to generate assembly for a file
+common.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ppcbs.dir/build.make CMakeFiles/ppcbs.dir/common.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ppcbc.dir/build.make CMakeFiles/ppcbc.dir/common.c.s
+.PHONY : common.c.s
+
 err.o: err.c.o
 .PHONY : err.o
 
@@ -168,33 +195,6 @@ err.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ppcbs.dir/build.make CMakeFiles/ppcbs.dir/err.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ppcbc.dir/build.make CMakeFiles/ppcbc.dir/err.c.s
 .PHONY : err.c.s
-
-packets.o: packets.c.o
-.PHONY : packets.o
-
-# target to build an object file
-packets.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ppcbs.dir/build.make CMakeFiles/ppcbs.dir/packets.c.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ppcbc.dir/build.make CMakeFiles/ppcbc.dir/packets.c.o
-.PHONY : packets.c.o
-
-packets.i: packets.c.i
-.PHONY : packets.i
-
-# target to preprocess a source file
-packets.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ppcbs.dir/build.make CMakeFiles/ppcbs.dir/packets.c.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ppcbc.dir/build.make CMakeFiles/ppcbc.dir/packets.c.i
-.PHONY : packets.c.i
-
-packets.s: packets.c.s
-.PHONY : packets.s
-
-# target to generate assembly for a file
-packets.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ppcbs.dir/build.make CMakeFiles/ppcbs.dir/packets.c.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ppcbc.dir/build.make CMakeFiles/ppcbc.dir/packets.c.s
-.PHONY : packets.c.s
 
 ppcbc.o: ppcbc.c.o
 .PHONY : ppcbc.o
@@ -254,12 +254,12 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... ppcbc"
 	@echo "... ppcbs"
+	@echo "... common.o"
+	@echo "... common.i"
+	@echo "... common.s"
 	@echo "... err.o"
 	@echo "... err.i"
 	@echo "... err.s"
-	@echo "... packets.o"
-	@echo "... packets.i"
-	@echo "... packets.s"
 	@echo "... ppcbc.o"
 	@echo "... ppcbc.i"
 	@echo "... ppcbc.s"

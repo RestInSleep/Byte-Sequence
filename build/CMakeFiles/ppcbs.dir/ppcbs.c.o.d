@@ -95,4 +95,5 @@ CMakeFiles/ppcbs.dir/ppcbs.c.o: /home/jan/katalog/SIK/projekt1/ppcbs.c \
  /usr/lib/gcc/x86_64-linux-gnu/12/include/stdbool.h \
  /home/jan/katalog/SIK/projekt1/err.h \
  /usr/lib/gcc/x86_64-linux-gnu/12/include/stdnoreturn.h \
- /home/jan/katalog/SIK/projekt1/packets.h /usr/include/err.h
+ /home/jan/katalog/SIK/projekt1/common.h \
+ /home/jan/katalog/SIK/projekt1/protconst.h

@@ -114,19 +114,19 @@
 				</MakeCommands>
 			</Target>
 		</Build>
+		<Unit filename="/home/jan/katalog/SIK/projekt1/common.c">
+			<Option target="ppcbs"/>
+			<Option target="ppcbc"/>
+		</Unit>
+		<Unit filename="/home/jan/katalog/SIK/projekt1/common.h">
+			<Option target="ppcbs"/>
+			<Option target="ppcbc"/>
+		</Unit>
 		<Unit filename="/home/jan/katalog/SIK/projekt1/err.c">
 			<Option target="ppcbs"/>
 			<Option target="ppcbc"/>
 		</Unit>
 		<Unit filename="/home/jan/katalog/SIK/projekt1/err.h">
-			<Option target="ppcbs"/>
-			<Option target="ppcbc"/>
-		</Unit>
-		<Unit filename="/home/jan/katalog/SIK/projekt1/packets.c">
-			<Option target="ppcbs"/>
-			<Option target="ppcbc"/>
-		</Unit>
-		<Unit filename="/home/jan/katalog/SIK/projekt1/packets.h">
 			<Option target="ppcbs"/>
 			<Option target="ppcbc"/>
 		</Unit>

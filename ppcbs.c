@@ -14,7 +14,8 @@
 #include <limits.h>
 #include <stdbool.h>
 #include "err.h"
-#include "packets.h"
+#include "common.h"
+#include "protconst.h"
 
 
 void send_rejection_udp(struct sockaddr_in *client_address, struct data* data, int socket_fd) {
@@ -34,6 +35,11 @@ static void tcp_server_run(uint16_t port) {
 }
 
 int udp_receive_conn(int socket_fd, struct conn *connection, struct sockaddr_in *client_address) {
+    struct timeval no_timeout = {.tv_sec = 0, .tv_usec = 0};
+    if (setsockopt(socket_fd, SOL_SOCKET, SO_RCVTIMEO, &no_timeout, sizeof no_timeout) < 0) {
+        fprintf(stderr, "2");
+        syserr("setsockopt");
+    }
     ssize_t received_length;
     int flags = 0;
     socklen_t address_length = (socklen_t) sizeof(&client_address);
@@ -92,8 +98,10 @@ static void udp_server_no_retransmit_recv(uint64_t session_id, struct sockaddr_i
         received_length = recvfrom(socket_fd, buffer, sizeof(struct data) + MAX_PACKET_SIZE, flags,
                                    (struct sockaddr *) &incoming_address, &address_length);
         if (received_length < 0) {
+          if (errno == EAGAIN) {
+              fprintf(stderr, "timeout\n");
+          }
             fprintf(stderr, "recvfrom failed\n");
-            close(socket_fd);
             return;
         }
         struct data *data = (struct data *) buffer;
@@ -174,6 +182,12 @@ static void udp_server_run(uint16_t port) {
         if (!udp_receive_conn(socket_fd, &connection, &client_address)) {
             continue;
         }
+        struct timeval timeout = {.tv_sec = MAX_WAIT, .tv_usec = 0};
+        if (setsockopt(socket_fd, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof timeout) < 0) {
+            fprintf(stderr, "1");
+            syserr("setsockopt");
+        }
+
         uint64_t session_id = be64toh(connection.meta.session_id);
         uint64_t sequence_length = be64toh(connection.net_sequence_length);
         fprintf(stderr, "sequence length: %" PRIu64 "\n", sequence_length);

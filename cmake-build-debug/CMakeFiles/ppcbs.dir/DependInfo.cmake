@@ -8,8 +8,8 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
+  "/home/jan/katalog/SIK/projekt1/common.c" "CMakeFiles/ppcbs.dir/common.c.o" "gcc" "CMakeFiles/ppcbs.dir/common.c.o.d"
   "/home/jan/katalog/SIK/projekt1/err.c" "CMakeFiles/ppcbs.dir/err.c.o" "gcc" "CMakeFiles/ppcbs.dir/err.c.o.d"
-  "/home/jan/katalog/SIK/projekt1/packets.c" "CMakeFiles/ppcbs.dir/packets.c.o" "gcc" "CMakeFiles/ppcbs.dir/packets.c.o.d"
   "/home/jan/katalog/SIK/projekt1/ppcbs.c" "CMakeFiles/ppcbs.dir/ppcbs.c.o" "gcc" "CMakeFiles/ppcbs.dir/ppcbs.c.o.d"
   )
 

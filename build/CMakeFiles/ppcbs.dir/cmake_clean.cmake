@@ -1,8 +1,8 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/ppcbs.dir/common.c.o"
+  "CMakeFiles/ppcbs.dir/common.c.o.d"
   "CMakeFiles/ppcbs.dir/err.c.o"
   "CMakeFiles/ppcbs.dir/err.c.o.d"
-  "CMakeFiles/ppcbs.dir/packets.c.o"
-  "CMakeFiles/ppcbs.dir/packets.c.o.d"
   "CMakeFiles/ppcbs.dir/ppcbs.c.o"
   "CMakeFiles/ppcbs.dir/ppcbs.c.o.d"
   "ppcbs"

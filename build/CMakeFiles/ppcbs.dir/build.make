@@ -97,32 +97,32 @@ CMakeFiles/ppcbs.dir/err.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/ppcbs.dir/err.c.s"
 	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/jan/katalog/SIK/projekt1/err.c -o CMakeFiles/ppcbs.dir/err.c.s
 
-CMakeFiles/ppcbs.dir/packets.c.o: CMakeFiles/ppcbs.dir/flags.make
-CMakeFiles/ppcbs.dir/packets.c.o: /home/jan/katalog/SIK/projekt1/packets.c
-CMakeFiles/ppcbs.dir/packets.c.o: CMakeFiles/ppcbs.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jan/katalog/SIK/projekt1/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object CMakeFiles/ppcbs.dir/packets.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/ppcbs.dir/packets.c.o -MF CMakeFiles/ppcbs.dir/packets.c.o.d -o CMakeFiles/ppcbs.dir/packets.c.o -c /home/jan/katalog/SIK/projekt1/packets.c
+CMakeFiles/ppcbs.dir/common.c.o: CMakeFiles/ppcbs.dir/flags.make
+CMakeFiles/ppcbs.dir/common.c.o: /home/jan/katalog/SIK/projekt1/common.c
+CMakeFiles/ppcbs.dir/common.c.o: CMakeFiles/ppcbs.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jan/katalog/SIK/projekt1/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object CMakeFiles/ppcbs.dir/common.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/ppcbs.dir/common.c.o -MF CMakeFiles/ppcbs.dir/common.c.o.d -o CMakeFiles/ppcbs.dir/common.c.o -c /home/jan/katalog/SIK/projekt1/common.c
 
-CMakeFiles/ppcbs.dir/packets.c.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/ppcbs.dir/packets.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/jan/katalog/SIK/projekt1/packets.c > CMakeFiles/ppcbs.dir/packets.c.i
+CMakeFiles/ppcbs.dir/common.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/ppcbs.dir/common.c.i"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/jan/katalog/SIK/projekt1/common.c > CMakeFiles/ppcbs.dir/common.c.i
 
-CMakeFiles/ppcbs.dir/packets.c.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/ppcbs.dir/packets.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/jan/katalog/SIK/projekt1/packets.c -o CMakeFiles/ppcbs.dir/packets.c.s
+CMakeFiles/ppcbs.dir/common.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/ppcbs.dir/common.c.s"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/jan/katalog/SIK/projekt1/common.c -o CMakeFiles/ppcbs.dir/common.c.s
 
 # Object files for target ppcbs
 ppcbs_OBJECTS = \
 "CMakeFiles/ppcbs.dir/ppcbs.c.o" \
 "CMakeFiles/ppcbs.dir/err.c.o" \
-"CMakeFiles/ppcbs.dir/packets.c.o"
+"CMakeFiles/ppcbs.dir/common.c.o"
 
 # External object files for target ppcbs
 ppcbs_EXTERNAL_OBJECTS =
 
 ppcbs: CMakeFiles/ppcbs.dir/ppcbs.c.o
 ppcbs: CMakeFiles/ppcbs.dir/err.c.o
-ppcbs: CMakeFiles/ppcbs.dir/packets.c.o
+ppcbs: CMakeFiles/ppcbs.dir/common.c.o
 ppcbs: CMakeFiles/ppcbs.dir/build.make
 ppcbs: CMakeFiles/ppcbs.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/jan/katalog/SIK/projekt1/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking C executable ppcbs"
