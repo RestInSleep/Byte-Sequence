@@ -17,7 +17,16 @@
 #include "packets.h"
 
 
-
+void send_rejection(struct sockaddr_in *client_address, struct data* data, int socket_fd) {
+    struct rjt rejection;
+    init_rjt(&rejection, be64toh(data->net_packet_number), be64toh(data->meta.session_id));
+    int flags = 0;
+    ssize_t sent = sendto(socket_fd, &rejection, sizeof(struct rjt), flags,
+                          (struct sockaddr *) client_address, (socklen_t) sizeof(*client_address));
+    if (sent < 0) {
+        fprintf(stderr, "client has not received rejection of connection info. damn.\n");
+    }
+}
 
 
 static uint16_t read_port(char const *string) {
@@ -42,7 +51,8 @@ int udp_receive_conn(char *buffer, int socket_fd, struct conn *connection, struc
     received_length = recvfrom(socket_fd, buffer, sizeof(struct conn), flags,
                                (struct sockaddr *) client_address, &address_length);
     if (received_length < 0) {
-        syserr("recvfrom");
+        fprintf(stderr, "did not receive connection!\n");
+        return 0;
     }
     if (received_length != sizeof(struct conn)) {
         fprintf(stderr, "received_length != sizeof(struct conn)");
@@ -50,6 +60,10 @@ int udp_receive_conn(char *buffer, int socket_fd, struct conn *connection, struc
     }
     memcpy(connection, buffer, sizeof(struct conn));
     if (connection->meta.packet_type_id != 1) {
+        if (connection->meta.packet_type_id == 4) {
+            struct data *data = (struct data *) connection;
+            send_rejection(client_address, data, socket_fd);
+        }
         fprintf(stderr, "server expects connection packet first!\n");
         return 0;
     }
@@ -67,6 +81,7 @@ int udp_receive_conn(char *buffer, int socket_fd, struct conn *connection, struc
 
 static void udp_server_no_retransmit_recv(uint64_t session_id, struct sockaddr_in* client_address,
                                           uint64_t sequence_length, int socket_fd, char *buffer) {
+
     fprintf(stderr, "sequence length %" PRIu64 "\n", sequence_length);
     struct con_acc con_acc;
     init_con_acc(&con_acc, session_id);
@@ -77,10 +92,9 @@ static void udp_server_no_retransmit_recv(uint64_t session_id, struct sockaddr_i
                           (struct sockaddr *) client_address, (socklen_t) sizeof(*client_address));
     if (sent < 0) {
         fprintf(stderr, "sendto failed\n");
-        close(socket_fd);
         return;
     }
-//TODO
+
     uint64_t currently_received = 0;
     struct sockaddr_in  incoming_address;
     uint64_t expected_packet_number = 0;
@@ -97,16 +111,6 @@ static void udp_server_no_retransmit_recv(uint64_t session_id, struct sockaddr_i
         struct data *data = (struct data *) buffer;
 
         if (data->meta.packet_type_id != 4) {
-            if (data->meta.packet_type_id == 1) {
-                struct con_rjt rejection;
-                init_con_rjt(&rejection, session_id);
-                printf("server is already serving a connection\n");
-                sent = sendto(socket_fd, &rejection, sizeof(struct con_rjt), flags,
-                              (struct sockaddr *) &incoming_address, (socklen_t) sizeof(*client_address));
-                if (sent < 0) {
-                    fprintf(stderr, "client has not received rejection of connection info. damn.\n");
-                }
-            }
             fprintf(stderr, "server expects data packet!\n");
             continue;
         }
@@ -141,6 +145,19 @@ static void udp_server_no_retransmit_recv(uint64_t session_id, struct sockaddr_i
                 return;
             }
     }
+    struct rcvd received;
+    init_rcvd(&received, session_id);
+    sent = sendto(socket_fd, &received, sizeof(struct rcvd), flags,
+                  (struct sockaddr *) client_address, (socklen_t) sizeof(*client_address));
+    if (sent < 0) {
+        fprintf(stderr, "sendto failed\n");
+        return;
+    }
+    if (sent != sizeof(struct rcvd)) {
+        fprintf(stderr, "partial / failed write\n");
+        return;
+    }
+    fprintf(stderr, "received all data\n");
 }
 
 
@@ -201,6 +218,7 @@ void run_server(uint8_t protocol_type, uint16_t port) {
         udp_server_run(port);
     }
     // read_protocol ensures that protocol_type is either 1 or 2
+    return;
 }
 
 
@@ -209,4 +227,5 @@ int main(int argc, char *argv[]) {
         fatal("usage: %s <protocol ('tcp' / 'udp')> <port>\n", argv[0]);
     }
     run_server(read_protocol(argv[1]), read_port(argv[2]));
+    return 0;
 }

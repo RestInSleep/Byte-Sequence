@@ -104,6 +104,14 @@ void init_rjt(struct rjt* rjt, uint64_t net_packet_number, uint64_t session_id) 
     rjt->net_packet_number = htobe64(net_packet_number);
 }
 
+void init_rcvd(struct rcvd* rcvd, uint64_t session_id) {
+    if (rcvd == NULL) {
+        fatal("rcvd is NULL");
+    }
+    rcvd->meta.packet_type_id = 7;
+    rcvd->meta.session_id = htobe64(session_id);
+}
+
 uint8_t read_protocol(char *input) {
     if (strcmp(input, "tcp") == 0) {
         return 1;
@@ -115,3 +123,4 @@ uint8_t read_protocol(char *input) {
         fatal("usage: %s <protocol ('tcp' / 'udp' / 'udpr')> <port>\n", "ppcbs");
     }
 }
+

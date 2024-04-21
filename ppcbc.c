@@ -146,10 +146,31 @@ void run_client_udp(char const * host, uint16_t port, char* buffer, size_t full_
         sequence_number++;
         sent_by_now += to_send_in_this_packet;
         fprintf(stderr, "sent %ld bytes\n", sent_by_now);
-        usleep(5000);
+        usleep(500);
     }
-
-
+    struct rjt rejection;
+    ssize_t received = recvfrom(socket_fd, &rejection, sizeof(rejection), 0, NULL, NULL);
+    if (received < 0) {
+        syserr("recvfrom");
+    }
+    if (rejection.meta.packet_type_id == 6) {
+        if (be64toh(rejection.meta.session_id) != session_id) {
+            fatal("session_id mismatch");
+        }
+        fprintf(stderr, "received rjt packet\n");
+    }
+    else if (rejection.meta.packet_type_id == 7) {
+        if (be64toh(rejection.meta.session_id) != session_id) {
+            fatal("session_id mismatch");
+        }
+        fprintf(stderr, "received rcvd packet\n");
+    }
+    else {
+        if (be64toh(rejection.meta.session_id) != session_id) {
+            fatal("session_id mismatch");
+        }
+        fatal("expected rjt or rcvd packet");
+    }
 }
 void run_client_udpr(char const* host, uint16_t port, char* buffer, size_t full_size) {
 
