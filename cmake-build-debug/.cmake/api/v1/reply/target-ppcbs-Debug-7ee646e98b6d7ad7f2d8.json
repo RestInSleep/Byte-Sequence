@@ -55,6 +55,10 @@
 				{
 					"backtrace" : 2,
 					"fragment" : "-O2"
+				},
+				{
+					"backtrace" : 2,
+					"fragment" : "-ggdb3"
 				}
 			],
 			"language" : "C",

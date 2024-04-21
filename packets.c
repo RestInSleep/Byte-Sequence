@@ -4,48 +4,9 @@
 #include <stdlib.h>
 
 #include "packets.h"
-#include "err.h"
-#include <string.h>
 
-struct vector {
-    char * data;
-    size_t size;
-    size_t capacity;
-};
 
-struct vector* init_vector(size_t capacity) {
-    struct vector* vec = malloc(sizeof(struct vector));
-    if (vec == NULL) {
-        fatal("malloc");
-    }
-    vec->data = malloc(capacity);
-    if (vec->data == NULL) {
-        fatal("malloc");
-    }
-    vec->capacity = capacity;
-    vec->size = 0;
-    return vec;
-}
 
-void push_back(struct vector* vec, char data) {
-    if (vec->size == vec->capacity) {
-        size_t new_capacity = vec->capacity * 2;
-        char* new_data = realloc(vec->data, new_capacity);
-        if (new_data == NULL) {
-            fatal("realloc: input probably too large");
-        }
-        vec->data = new_data;
-        vec->capacity = new_capacity;
-    }
-    vec->data[vec->size++] = data;
-}
-
-char pop_back(struct vector* vec) {
-    if (vec->size == 0) {
-        fatal("pop_back: vector is empty");
-    }
-    return vec->data[--vec->size];
-}
 
 
 
@@ -123,4 +84,15 @@ uint8_t read_protocol(char *input) {
         fatal("usage: %s <protocol ('tcp' / 'udp' / 'udpr')> <port>\n", "ppcbs");
     }
 }
+
+uint16_t read_port(char const *string) {
+    char *endptr;
+    errno = 0;
+    unsigned long port = strtoul(string, &endptr, 10);
+    if (errno != 0 || *endptr != 0 || port == 0 || port > UINT16_MAX) {
+        fatal("%s is not a valid port number", string);
+    }
+    return (uint16_t) port;
+}
+
 

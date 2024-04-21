@@ -17,7 +17,7 @@
 #include "packets.h"
 
 
-void send_rejection(struct sockaddr_in *client_address, struct data* data, int socket_fd) {
+void send_rejection_udp(struct sockaddr_in *client_address, struct data* data, int socket_fd) {
     struct rjt rejection;
     init_rjt(&rejection, be64toh(data->net_packet_number), be64toh(data->meta.session_id));
     int flags = 0;
@@ -27,28 +27,17 @@ void send_rejection(struct sockaddr_in *client_address, struct data* data, int s
         fprintf(stderr, "client has not received rejection of connection info. damn.\n");
     }
 }
-
-
-static uint16_t read_port(char const *string) {
-    char *endptr;
-    unsigned long port = strtoul(string, &endptr, 10);
-    if ((port == ULONG_MAX && errno == ERANGE) || *endptr != 0 || port == 0 || port > UINT16_MAX) {
-        fatal("%s is not a valid port number", string);
-    }
-    return (uint16_t) port;
-}
-
 static void tcp_server_run(uint16_t port) {
     int socket_fd = socket(AF_INET, SOCK_STREAM, 0);
 
 
 }
 
-int udp_receive_conn(char *buffer, int socket_fd, struct conn *connection, struct sockaddr_in *client_address) {
+int udp_receive_conn(int socket_fd, struct conn *connection, struct sockaddr_in *client_address) {
     ssize_t received_length;
     int flags = 0;
     socklen_t address_length = (socklen_t) sizeof(&client_address);
-    received_length = recvfrom(socket_fd, buffer, sizeof(struct conn), flags,
+    received_length = recvfrom(socket_fd, connection, sizeof(struct conn), flags,
                                (struct sockaddr *) client_address, &address_length);
     if (received_length < 0) {
         fprintf(stderr, "did not receive connection!\n");
@@ -58,11 +47,10 @@ int udp_receive_conn(char *buffer, int socket_fd, struct conn *connection, struc
         fprintf(stderr, "received_length != sizeof(struct conn)");
         return 0;
     }
-    memcpy(connection, buffer, sizeof(struct conn));
     if (connection->meta.packet_type_id != 1) {
         if (connection->meta.packet_type_id == 4) {
             struct data *data = (struct data *) connection;
-            send_rejection(client_address, data, socket_fd);
+            send_rejection_udp(client_address, data, socket_fd);
         }
         fprintf(stderr, "server expects connection packet first!\n");
         return 0;
@@ -101,7 +89,7 @@ static void udp_server_no_retransmit_recv(uint64_t session_id, struct sockaddr_i
     while (currently_received < sequence_length) {
         ssize_t received_length;
         socklen_t address_length = (socklen_t) sizeof(incoming_address);
-        received_length = recvfrom(socket_fd, buffer, sizeof(struct data), flags,
+        received_length = recvfrom(socket_fd, buffer, sizeof(struct data) + MAX_PACKET_SIZE, flags,
                                    (struct sockaddr *) &incoming_address, &address_length);
         if (received_length < 0) {
             fprintf(stderr, "recvfrom failed\n");
@@ -116,17 +104,15 @@ static void udp_server_no_retransmit_recv(uint64_t session_id, struct sockaddr_i
         }
         if (be64toh(data->meta.session_id) != session_id) {
             fprintf(stderr, "data with wrong session_id!\n");
-            struct rjt rejection;
-            init_rjt(&rejection, data->net_packet_number, session_id);
-            sent = sendto(socket_fd, &rejection, sizeof(struct rjt), flags,
-                          (struct sockaddr *) &incoming_address, (socklen_t) sizeof(*client_address));
-            if (sent < 0) {
-                fprintf(stderr, "client has not received rejection of connection info. damn.\n");
-            }
+            send_rejection_udp(&incoming_address, data, socket_fd);
+        }
+        if(received_length != sizeof(struct data) + be32toh(data->net_packet_bytes)) {
+            fprintf(stderr, "received_length != sizeof(struct data) + be32toh(data->net_packet_bytes)\n");
+            continue;
         }
         fprintf(stderr, "received data packet with number %" PRIu64 "\n", be64toh(data->net_packet_number));
         if (be64toh(data->net_packet_number) != expected_packet_number || be32toh(data->net_packet_bytes) > MAX_PACKET_SIZE) {
-            fprintf(stderr, "wrong data - sad to say, we say goodbye!\n");
+            fprintf(stderr, "wrong data order - sad to say, we say goodbye!\n");
             struct rjt rejection;
             init_rjt(&rejection, data->net_packet_number, session_id);
             sent = sendto(socket_fd, &rejection, sizeof(struct rjt), flags,
@@ -169,7 +155,7 @@ static void udp_server_retransmit_recv(uint64_t session_id, struct sockaddr_in c
 
 static void udp_server_run(uint16_t port) {
 //TODO we have to use one socket!!!!!!
-    char buffer[sizeof (struct data)];
+    char buffer[sizeof (struct data) + MAX_PACKET_SIZE];
     int socket_fd = socket(AF_INET, SOCK_DGRAM, 0);
     if (socket_fd < 0) {
         syserr("cannot create a socket");
@@ -183,19 +169,15 @@ static void udp_server_run(uint16_t port) {
     }
 
     while (true) {
-        //TODO: delete
-        fprintf(stderr, "listening on port %" PRIu16 "\n", port);
-
         struct conn connection;
         struct sockaddr_in client_address;
-        if (!udp_receive_conn(buffer, socket_fd, &connection, &client_address)) {
+        if (!udp_receive_conn(socket_fd, &connection, &client_address)) {
             continue;
         }
         uint64_t session_id = be64toh(connection.meta.session_id);
         uint64_t sequence_length = be64toh(connection.net_sequence_length);
         fprintf(stderr, "sequence length: %" PRIu64 "\n", sequence_length);
         uint8_t protocol_id = connection.protocol_id;
-        printf("received connection packet with session id %" PRIu64 "\n", session_id);
         if (protocol_id == 2) {
             udp_server_no_retransmit_recv(session_id, &client_address, sequence_length, socket_fd, buffer);
         } else if (protocol_id == 3) {

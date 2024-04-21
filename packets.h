@@ -6,6 +6,9 @@
 #define SIK_1_PACKETS_H
 #include <inttypes.h>
 #include <err.h>
+#include <errno.h>
+#include <string.h>
+#include <stdlib.h>
 
 #define MAX_PACKET_SIZE 64000
 
@@ -33,7 +36,7 @@ struct  __attribute__ ((__packed__)) data {
     struct metadata meta;
     uint64_t net_packet_number;
     uint32_t net_packet_bytes;
-    char data[64000];
+    char data[];
 };
 
 struct  __attribute__ ((__packed__)) acc {

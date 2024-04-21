@@ -6,5 +6,5 @@ C_DEFINES =
 
 C_INCLUDES = 
 
-C_FLAGS = -Wall -Wextra -O2
+C_FLAGS = -Wall -Wextra -O2 -ggdb3
 

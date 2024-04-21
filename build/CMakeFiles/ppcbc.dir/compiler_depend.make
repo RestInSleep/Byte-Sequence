@@ -33,7 +33,6 @@ CMakeFiles/ppcbc.dir/err.c.o: /home/jan/katalog/SIK/projekt1/err.c \
   /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
   /usr/include/x86_64-linux-gnu/bits/floatn.h \
   /usr/include/x86_64-linux-gnu/bits/floatn-common.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio.h \
   /usr/include/stdlib.h \
   /usr/include/x86_64-linux-gnu/bits/waitflags.h \
   /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
@@ -61,7 +60,6 @@ CMakeFiles/ppcbc.dir/err.c.o: /home/jan/katalog/SIK/projekt1/err.c \
   /usr/include/x86_64-linux-gnu/bits/struct_mutex.h \
   /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h \
   /usr/include/alloca.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
   /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
   /usr/include/string.h \
   /usr/include/x86_64-linux-gnu/bits/types/locale_t.h \
@@ -114,7 +112,6 @@ CMakeFiles/ppcbc.dir/packets.c.o: /home/jan/katalog/SIK/projekt1/packets.c \
   /usr/include/x86_64-linux-gnu/bits/struct_mutex.h \
   /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h \
   /usr/include/alloca.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
   /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
   /home/jan/katalog/SIK/projekt1/packets.h \
   /usr/include/inttypes.h \
@@ -124,8 +121,12 @@ CMakeFiles/ppcbc.dir/packets.c.o: /home/jan/katalog/SIK/projekt1/packets.c \
   /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
   /usr/include/err.h \
   /usr/lib/gcc/x86_64-linux-gnu/12/include/stdarg.h \
-  /home/jan/katalog/SIK/projekt1/err.h \
-  /usr/lib/gcc/x86_64-linux-gnu/12/include/stdnoreturn.h \
+  /usr/include/errno.h \
+  /usr/include/x86_64-linux-gnu/bits/errno.h \
+  /usr/include/linux/errno.h \
+  /usr/include/x86_64-linux-gnu/asm/errno.h \
+  /usr/include/asm-generic/errno.h \
+  /usr/include/asm-generic/errno-base.h \
   /usr/include/string.h \
   /usr/include/x86_64-linux-gnu/bits/types/locale_t.h \
   /usr/include/x86_64-linux-gnu/bits/types/__locale_t.h \
@@ -157,7 +158,6 @@ CMakeFiles/ppcbc.dir/ppcbc.c.o: /home/jan/katalog/SIK/projekt1/ppcbc.c \
   /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
   /usr/include/x86_64-linux-gnu/bits/floatn.h \
   /usr/include/x86_64-linux-gnu/bits/floatn-common.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio.h \
   /usr/include/stdlib.h \
   /usr/include/x86_64-linux-gnu/bits/waitflags.h \
   /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
@@ -185,7 +185,6 @@ CMakeFiles/ppcbc.dir/ppcbc.c.o: /home/jan/katalog/SIK/projekt1/ppcbc.c \
   /usr/include/x86_64-linux-gnu/bits/struct_mutex.h \
   /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h \
   /usr/include/alloca.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
   /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
   /usr/include/string.h \
   /usr/include/x86_64-linux-gnu/bits/types/locale_t.h \
@@ -323,7 +322,9 @@ CMakeFiles/ppcbc.dir/ppcbc.c.o: /home/jan/katalog/SIK/projekt1/ppcbc.c \
 
 /usr/include/strings.h:
 
-/usr/include/alloca.h:
+/usr/include/x86_64-linux-gnu/bits/types/struct_tm.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/FILE.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h:
 
@@ -332,6 +333,8 @@ CMakeFiles/ppcbc.dir/ppcbc.c.o: /home/jan/katalog/SIK/projekt1/ppcbc.c \
 /usr/include/x86_64-linux-gnu/bits/uintn-identity.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h:
+
+/usr/include/alloca.h:
 
 /usr/include/asm-generic/posix_types.h:
 
@@ -382,8 +385,6 @@ CMakeFiles/ppcbc.dir/ppcbc.c.o: /home/jan/katalog/SIK/projekt1/ppcbc.c \
 /usr/include/x86_64-linux-gnu/sys/socket.h:
 
 /usr/include/x86_64-linux-gnu/bits/stdlib-float.h:
-
-/usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h:
 
 /usr/include/stdc-predef.h:
 
@@ -448,12 +449,6 @@ CMakeFiles/ppcbc.dir/ppcbc.c.o: /home/jan/katalog/SIK/projekt1/ppcbc.c \
 /usr/include/x86_64-linux-gnu/bits/floatn.h:
 
 /usr/include/x86_64-linux-gnu/bits/floatn-common.h:
-
-/usr/include/x86_64-linux-gnu/bits/types/struct_tm.h:
-
-/usr/include/x86_64-linux-gnu/bits/types/FILE.h:
-
-/usr/include/x86_64-linux-gnu/bits/stdio.h:
 
 /usr/include/x86_64-linux-gnu/bits/waitflags.h:
 

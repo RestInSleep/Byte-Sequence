@@ -54,7 +54,7 @@
 				},
 				{
 					"backtrace" : 2,
-					"fragment" : "-O2"
+					"fragment" : "-ggdb3"
 				}
 			],
 			"language" : "C",
