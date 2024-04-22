@@ -47,14 +47,11 @@ CMakeFiles/ppcbs.dir/common.c.o: /home/jan/katalog/SIK/projekt1/common.c \
   /usr/include/alloca.h \
   /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
   /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
-  /home/jan/katalog/SIK/projekt1/common.h \
   /usr/include/inttypes.h \
   /usr/lib/gcc/x86_64-linux-gnu/12/include/stdint.h \
   /usr/include/stdint.h \
   /usr/include/x86_64-linux-gnu/bits/wchar.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
-  /home/jan/katalog/SIK/projekt1/err.h \
-  /usr/lib/gcc/x86_64-linux-gnu/12/include/stdnoreturn.h \
   /usr/include/string.h \
   /usr/include/x86_64-linux-gnu/bits/types/locale_t.h \
   /usr/include/x86_64-linux-gnu/bits/types/__locale_t.h \
@@ -64,7 +61,31 @@ CMakeFiles/ppcbs.dir/common.c.o: /home/jan/katalog/SIK/projekt1/common.c \
   /usr/include/linux/errno.h \
   /usr/include/x86_64-linux-gnu/asm/errno.h \
   /usr/include/asm-generic/errno.h \
-  /usr/include/asm-generic/errno-base.h
+  /usr/include/asm-generic/errno-base.h \
+  /usr/include/arpa/inet.h \
+  /usr/include/netinet/in.h \
+  /usr/include/x86_64-linux-gnu/sys/socket.h \
+  /usr/include/x86_64-linux-gnu/bits/types/struct_iovec.h \
+  /usr/include/x86_64-linux-gnu/bits/socket.h \
+  /usr/include/x86_64-linux-gnu/bits/socket_type.h \
+  /usr/include/x86_64-linux-gnu/bits/sockaddr.h \
+  /usr/include/x86_64-linux-gnu/asm/socket.h \
+  /usr/include/asm-generic/socket.h \
+  /usr/include/linux/posix_types.h \
+  /usr/include/linux/stddef.h \
+  /usr/include/x86_64-linux-gnu/asm/posix_types.h \
+  /usr/include/x86_64-linux-gnu/asm/posix_types_64.h \
+  /usr/include/asm-generic/posix_types.h \
+  /usr/include/x86_64-linux-gnu/asm/bitsperlong.h \
+  /usr/include/asm-generic/bitsperlong.h \
+  /usr/include/x86_64-linux-gnu/asm/sockios.h \
+  /usr/include/asm-generic/sockios.h \
+  /usr/include/x86_64-linux-gnu/bits/types/struct_osockaddr.h \
+  /usr/include/x86_64-linux-gnu/bits/in.h \
+  /home/jan/katalog/SIK/projekt1/common.h \
+  /home/jan/katalog/SIK/projekt1/err.h \
+  /usr/lib/gcc/x86_64-linux-gnu/12/include/stdnoreturn.h \
+  /home/jan/katalog/SIK/projekt1/protconst.h
 
 CMakeFiles/ppcbs.dir/err.c.o: /home/jan/katalog/SIK/projekt1/err.c \
   /usr/include/stdc-predef.h \
@@ -262,6 +283,26 @@ CMakeFiles/ppcbs.dir/ppcbs.c.o: /home/jan/katalog/SIK/projekt1/ppcbs.c \
 
 /usr/include/netdb.h:
 
+/usr/include/x86_64-linux-gnu/bits/unistd_ext.h:
+
+/usr/include/x86_64-linux-gnu/bits/confname.h:
+
+/usr/include/x86_64-linux-gnu/bits/posix_opt.h:
+
+/usr/include/unistd.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h:
+
+/usr/include/x86_64-linux-gnu/bits/stdio.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/FILE.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/12/include/stdarg.h:
+
 /usr/lib/gcc/x86_64-linux-gnu/12/include/stdbool.h:
 
 /usr/include/x86_64-linux-gnu/bits/in.h:
@@ -296,26 +337,6 @@ CMakeFiles/ppcbs.dir/ppcbs.c.o: /home/jan/katalog/SIK/projekt1/ppcbs.c \
 
 /usr/include/arpa/inet.h:
 
-/usr/include/x86_64-linux-gnu/bits/unistd_ext.h:
-
-/usr/include/x86_64-linux-gnu/bits/confname.h:
-
-/usr/include/x86_64-linux-gnu/bits/posix_opt.h:
-
-/usr/include/unistd.h:
-
-/usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h:
-
-/usr/include/x86_64-linux-gnu/bits/stdio.h:
-
-/usr/include/x86_64-linux-gnu/bits/types/FILE.h:
-
-/usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h:
-
-/usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h:
-
-/usr/lib/gcc/x86_64-linux-gnu/12/include/stdarg.h:
-
 /usr/include/asm-generic/errno-base.h:
 
 /usr/include/asm-generic/errno.h:
@@ -324,11 +345,13 @@ CMakeFiles/ppcbs.dir/ppcbs.c.o: /home/jan/katalog/SIK/projekt1/ppcbs.c \
 
 /usr/include/x86_64-linux-gnu/asm/errno.h:
 
+/usr/include/x86_64-linux-gnu/bits/stdint-intn.h:
+
 /usr/include/linux/errno.h:
 
-/usr/include/x86_64-linux-gnu/bits/errno.h:
+/home/jan/katalog/SIK/projekt1/common.h:
 
-/usr/include/x86_64-linux-gnu/bits/stdint-intn.h:
+/usr/include/x86_64-linux-gnu/bits/endianness.h:
 
 /usr/include/asm-generic/posix_types.h:
 
@@ -352,6 +375,8 @@ CMakeFiles/ppcbs.dir/ppcbs.c.o: /home/jan/katalog/SIK/projekt1/ppcbs.c \
 
 /usr/include/x86_64-linux-gnu/bits/types/clock_t.h:
 
+/usr/include/x86_64-linux-gnu/bits/errno.h:
+
 /usr/include/x86_64-linux-gnu/bits/floatn-common.h:
 
 /usr/include/strings.h:
@@ -361,6 +386,10 @@ CMakeFiles/ppcbs.dir/ppcbs.c.o: /home/jan/katalog/SIK/projekt1/ppcbs.c \
 /usr/include/x86_64-linux-gnu/bits/waitstatus.h:
 
 /usr/include/x86_64-linux-gnu/bits/waitflags.h:
+
+/home/jan/katalog/SIK/projekt1/err.h:
+
+/usr/include/stdlib.h:
 
 /usr/lib/gcc/x86_64-linux-gnu/12/include/syslimits.h:
 
@@ -392,11 +421,11 @@ CMakeFiles/ppcbs.dir/ppcbs.c.o: /home/jan/katalog/SIK/projekt1/ppcbs.c \
 
 /usr/include/features-time64.h:
 
-/usr/include/x86_64-linux-gnu/asm/socket.h:
-
 /usr/include/x86_64-linux-gnu/bits/getopt_core.h:
 
 /home/jan/katalog/SIK/projekt1/ppcbs.c:
+
+/usr/include/x86_64-linux-gnu/asm/socket.h:
 
 /usr/include/x86_64-linux-gnu/bits/timesize.h:
 
@@ -446,10 +475,6 @@ CMakeFiles/ppcbs.dir/ppcbs.c.o: /home/jan/katalog/SIK/projekt1/ppcbs.c \
 
 /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h:
 
-/usr/include/stdlib.h:
-
-/home/jan/katalog/SIK/projekt1/err.h:
-
 /usr/include/x86_64-linux-gnu/bits/thread-shared-types.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/time_t.h:
@@ -470,18 +495,14 @@ CMakeFiles/ppcbs.dir/ppcbs.c.o: /home/jan/katalog/SIK/projekt1/ppcbs.c \
 
 /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h:
 
-/usr/include/x86_64-linux-gnu/bits/endianness.h:
-
-/home/jan/katalog/SIK/projekt1/common.h:
-
-/usr/lib/gcc/x86_64-linux-gnu/12/include/stdint.h:
-
 /usr/include/x86_64-linux-gnu/bits/getopt_posix.h:
 
 /usr/include/stdio.h:
 
+/usr/lib/gcc/x86_64-linux-gnu/12/include/stdnoreturn.h:
+
 /usr/include/x86_64-linux-gnu/bits/types/__locale_t.h:
 
-/usr/lib/gcc/x86_64-linux-gnu/12/include/stdnoreturn.h:
+/usr/lib/gcc/x86_64-linux-gnu/12/include/stdint.h:
 
 /usr/include/errno.h:

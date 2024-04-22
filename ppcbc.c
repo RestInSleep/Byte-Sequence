@@ -43,6 +43,7 @@ char* read_data(size_t* full_size) {
     *full_size = currently_read;
     return data_to_send;
 }
+
 uint64_t generate_session_id() {
     uint64_t result = 0;
     for (int i = 0; i < 8; i++) {
@@ -53,7 +54,6 @@ uint64_t generate_session_id() {
 
 void udp_send_conn(uint64_t full_size, int socket_fd, struct sockaddr_in server_address, uint64_t session_id) {
     struct conn connection;
-    //printf("session_id: %" PRIu64 "\n", session_id);
     init_conn(&connection, 2, full_size, session_id);
     ssize_t sent_length = sendto(socket_fd, &connection, sizeof(connection), 0,
                                  (struct sockaddr *) &server_address, sizeof(server_address));
@@ -69,6 +69,9 @@ void udp_recv_con_acc(int socket_fd, uint64_t session_id) {
     struct con_acc con_acc;
     ssize_t received_length = recvfrom(socket_fd, &con_acc, sizeof(con_acc), 0, NULL, NULL);
     if(received_length < 0) {
+        if (errno == EAGAIN) {
+            fatal("timeout!");
+        }
         syserr("recvfrom");
     }
     if(received_length != sizeof(con_acc)) {
@@ -90,7 +93,6 @@ void udp_recv_con_acc(int socket_fd, uint64_t session_id) {
 
 void udp_send_data_packet(size_t* sent_by_now, size_t full_size, int socket_fd, struct sockaddr_in *server_address, uint64_t session_id,
              uint64_t *sequence_number, char* data_to_send) {
-   sleep(3);
     size_t to_send_in_this_packet = full_size - *sent_by_now >= MAX_PACKET_SIZE ? MAX_PACKET_SIZE : full_size - *sent_by_now;
     struct data * data_packet = malloc(sizeof(struct data) + to_send_in_this_packet);
     init_data(data_packet, *sequence_number, to_send_in_this_packet, data_to_send + *sent_by_now, session_id);
@@ -112,6 +114,9 @@ void udp_receive_rjt_or_rcvd(int socket_fd, uint64_t session_id) {
     struct rjt rejection;
     ssize_t received = recvfrom(socket_fd, &rejection, sizeof(rejection), 0, NULL, NULL);
     if (received < 0) {
+        if (errno == EAGAIN) {
+            fatal("timeout!");
+        }
         syserr("recvfrom");
     }
     if (rejection.meta.packet_type_id == 6) {
@@ -167,6 +172,7 @@ void run_client_udp(char const * host, uint16_t port, char* data_to_send, size_t
     if (socket_fd < 0) {
         syserr("cannot create a socket");
     }
+    set_timeout(socket_fd);
     uint64_t session_id = generate_session_id();
     udp_send_conn(full_size, socket_fd, server_address, session_id);
     udp_recv_con_acc(socket_fd, session_id);
@@ -214,5 +220,6 @@ int main (int argc, char *argv[]) {
     //TODO read input
 
     // Create a socket.
+    return 0;
 
 }

@@ -2,11 +2,13 @@
 // Created by Jan Jagodziński on 29/03/2024.
 //
 #include <stdlib.h>
-
-#include "common.h"
-#include "err.h"
+#include <inttypes.h>
 #include <string.h>
 #include <errno.h>
+#include <arpa/inet.h>
+#include "common.h"
+#include "err.h"
+#include "protconst.h"
 
 
 
@@ -98,4 +100,20 @@ uint16_t read_port(char const *string) {
     return (uint16_t) port;
 }
 
+void set_timeout(int socket_fd) {
+    struct timeval tv;
+    tv.tv_sec = MAX_WAIT;
+    tv.tv_usec = 0;
+    if (setsockopt(socket_fd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv)) < 0) {
+        syserr("setsockopt failed");
+    }
+}
 
+void unset_timeout(int socket_fd) {
+    struct timeval tv;
+    tv.tv_sec = 0;
+    tv.tv_usec = 0;
+    if (setsockopt(socket_fd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv)) < 0) {
+        syserr("setsockopt failed");
+    }
+}
