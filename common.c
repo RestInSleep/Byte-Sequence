@@ -61,13 +61,13 @@ void init_acc(struct acc* acc, uint64_t net_packet_number, uint64_t session_id) 
     acc->net_packet_number = htobe64(net_packet_number);
 }
 
-void init_rjt(struct rjt* rjt, uint64_t net_packet_number, uint64_t session_id) {
+void init_rjt(struct rjt* rjt, uint64_t packet_number, uint64_t session_id) {
     if (rjt == NULL) {
         fatal("rjt is NULL");
     }
     rjt->meta.packet_type_id = 6;
     rjt->meta.session_id = htobe64(session_id);
-    rjt->net_packet_number = htobe64(net_packet_number);
+    rjt->net_packet_number = htobe64(packet_number);
 }
 
 void init_rcvd(struct rcvd* rcvd, uint64_t session_id) {
@@ -116,4 +116,46 @@ void unset_timeout(int socket_fd) {
     if (setsockopt(socket_fd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv)) < 0) {
         syserr("setsockopt failed");
     }
+}
+
+struct sockaddr_in create_address(uint16_t port) {
+    struct sockaddr_in server_address;
+    server_address.sin_family = AF_INET; // IPv4
+    server_address.sin_addr.s_addr = htonl(INADDR_ANY); // Listening on all interfaces.
+    server_address.sin_port = htons(port);
+    return server_address;
+}
+
+ssize_t readn(int fd, void *vptr, size_t n) {
+    ssize_t nleft, nread;
+    char *ptr;
+
+    ptr = vptr;
+    nleft = n;
+    while (nleft > 0) {
+        if ((nread = read(fd, ptr, nleft)) < 0)
+            return nread;     // When error, return < 0.
+        else if (nread == 0)
+            break;            // EOF
+
+        nleft -= nread;
+        ptr += nread;
+    }
+    return n - nleft;         // return >= 0
+}
+
+ssize_t writen(int fd, const void *vptr, size_t n){
+    ssize_t nleft, nwritten;
+    const char *ptr;
+
+    ptr = vptr;               // Can't do pointer arithmetic on void*.
+    nleft = n;
+    while (nleft > 0) {
+        if ((nwritten = write(fd, ptr, nleft)) <= 0)
+            return nwritten;  // error
+
+        nleft -= nwritten;
+        ptr += nwritten;
+    }
+    return n;
 }

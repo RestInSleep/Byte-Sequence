@@ -9,6 +9,7 @@
 
 
 #define MAX_PACKET_SIZE 64000
+#define QUEUE_LENGTH 10
 
 
 struct  __attribute__ ((__packed__)) metadata {
@@ -62,6 +63,9 @@ uint8_t read_protocol(char *input);
 uint16_t read_port(char const *string);
 void set_timeout(int socket_fd);
 void unset_timeout(int socket_fd);
+struct sockaddr_in create_address(uint16_t port);
+ssize_t writen(int fd, const void *buf, size_t count);
+ssize_t readn(int fd, void *buf, size_t count);
 
 
 #endif //SIK_1_COMMON_H
