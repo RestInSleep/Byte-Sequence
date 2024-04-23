@@ -73,7 +73,7 @@ ssize_t udp_send_con_acc(int socket_fd, struct sockaddr_in *client_address, uint
    return sent;
 }
 
-int udp_receive_data_packet(int socket_fd, struct data *data, uint64_t session_id, uint64_t *currently_received) {
+int udp_receive_data_packet(int socket_fd, struct data *data, uint64_t session_id, uint64_t *currently_received, uint64_t *expected_packet_number) {
     ssize_t received_length;
     int flags = 0;
     struct sockaddr_in incoming_address;
@@ -96,8 +96,19 @@ int udp_receive_data_packet(int socket_fd, struct data *data, uint64_t session_i
         fprintf(stderr, "data with wrong session_id!\n");
         udp_send_rjt(&incoming_address, data, socket_fd);
     }
-    if(received_length != sizeof(struct data) + be32toh(data->net_packet_bytes)) {
+    if((uint32_t)received_length != sizeof(struct data) + be32toh(data->net_packet_bytes)) {
         fprintf(stderr, "received_length != sizeof(struct data) + be32toh(data->net_packet_bytes)\n");
+        udp_send_rjt(&incoming_address, data, socket_fd);
+        return -1;
+    }
+    if (be64toh(data->net_packet_number) != *expected_packet_number) {
+        if (be64toh(data->net_packet_number) < *expected_packet_number) {
+            fprintf(stderr, "received data packet with number %" PRIu64 " which was already received\n", be64toh(data->net_packet_number));
+
+            return -1;
+        }
+
+        fprintf(stderr, "wrong packet number! %lu \n", be64toh(data->net_packet_number));
         udp_send_rjt(&incoming_address, data, socket_fd);
         return -1;
     }
@@ -110,6 +121,7 @@ int udp_receive_data_packet(int socket_fd, struct data *data, uint64_t session_i
     }
     fflush(stdout);
     *currently_received += be32toh(data->net_packet_bytes);
+    *expected_packet_number += 1;
     return 1;
 }
 
@@ -137,7 +149,7 @@ static void udp_server_no_retransmit_recv(uint64_t session_id, struct sockaddr_i
     uint64_t currently_received = 0;
     uint64_t expected_packet_number = 0;
     while (currently_received < sequence_length) {
-        int received = udp_receive_data_packet(socket_fd, (struct data *) buffer, session_id, &currently_received);
+        int received = udp_receive_data_packet(socket_fd, (struct data *) buffer, session_id, &currently_received, &expected_packet_number);
         if (received < 0) {
             fprintf(stderr, "data could not be received, closing connection...\n");
             return;
@@ -228,9 +240,9 @@ int tcp_send_con_acc(int client_fd, uint64_t session_id) {
     return 1;
 }
 
-int tcp_send_rjt(int client_fd, uint64_t session_id, uint64_t sequence_number) {
+int tcp_send_rjt(int client_fd, uint64_t session_id, uint64_t packet_number) {
     struct rjt rjt;
-    init_rjt(&rjt, sequence_number, session_id);
+    init_rjt(&rjt, packet_number, session_id);
     ssize_t sent = writen(client_fd, &rjt, sizeof(struct con_rjt));
     if (sent < 0) {
         fprintf(stderr, "con_rjt could not be sent, closing connection...\n");
@@ -337,6 +349,7 @@ void tcp_server_recv(int socket_fd, char * receive_buffer) {
     }
     fprintf(stderr, "received all data\n");
     tcp_send_rcvd(client_fd, session_id);
+    close(client_fd);
 }
 
 

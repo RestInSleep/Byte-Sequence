@@ -95,4 +95,5 @@ CMakeFiles/ppcbc.dir/ppcbc.c.o: /home/jan/katalog/SIK/projekt1/ppcbc.c \
  /usr/include/x86_64-linux-gnu/bits/types/struct_itimerspec.h \
  /home/jan/katalog/SIK/projekt1/err.h \
  /usr/lib/gcc/x86_64-linux-gnu/12/include/stdnoreturn.h \
- /home/jan/katalog/SIK/projekt1/common.h
+ /home/jan/katalog/SIK/projekt1/common.h \
+ /home/jan/katalog/SIK/projekt1/protconst.h

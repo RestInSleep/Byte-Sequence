@@ -6,6 +6,9 @@
 #include <string.h>
 #include <errno.h>
 #include <arpa/inet.h>
+#include <sys/socket.h>
+#include <sys/time.h>
+#include <unistd.h>
 #include "common.h"
 #include "err.h"
 #include "protconst.h"
