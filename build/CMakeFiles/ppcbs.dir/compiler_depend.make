@@ -82,6 +82,14 @@ CMakeFiles/ppcbs.dir/common.c.o: /home/jan/katalog/SIK/projekt1/common.c \
   /usr/include/asm-generic/sockios.h \
   /usr/include/x86_64-linux-gnu/bits/types/struct_osockaddr.h \
   /usr/include/x86_64-linux-gnu/bits/in.h \
+  /usr/include/x86_64-linux-gnu/sys/time.h \
+  /usr/include/unistd.h \
+  /usr/include/x86_64-linux-gnu/bits/posix_opt.h \
+  /usr/include/x86_64-linux-gnu/bits/environments.h \
+  /usr/include/x86_64-linux-gnu/bits/confname.h \
+  /usr/include/x86_64-linux-gnu/bits/getopt_posix.h \
+  /usr/include/x86_64-linux-gnu/bits/getopt_core.h \
+  /usr/include/x86_64-linux-gnu/bits/unistd_ext.h \
   /home/jan/katalog/SIK/projekt1/common.h \
   /home/jan/katalog/SIK/projekt1/err.h \
   /usr/lib/gcc/x86_64-linux-gnu/12/include/stdnoreturn.h \
@@ -283,14 +291,6 @@ CMakeFiles/ppcbs.dir/ppcbs.c.o: /home/jan/katalog/SIK/projekt1/ppcbs.c \
 
 /usr/include/netdb.h:
 
-/usr/include/x86_64-linux-gnu/bits/unistd_ext.h:
-
-/usr/include/x86_64-linux-gnu/bits/confname.h:
-
-/usr/include/x86_64-linux-gnu/bits/posix_opt.h:
-
-/usr/include/unistd.h:
-
 /usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h:
 
 /usr/include/x86_64-linux-gnu/bits/stdio.h:
@@ -302,6 +302,16 @@ CMakeFiles/ppcbs.dir/ppcbs.c.o: /home/jan/katalog/SIK/projekt1/ppcbs.c \
 /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h:
 
 /usr/lib/gcc/x86_64-linux-gnu/12/include/stdarg.h:
+
+/usr/include/x86_64-linux-gnu/bits/unistd_ext.h:
+
+/usr/include/x86_64-linux-gnu/bits/confname.h:
+
+/usr/include/x86_64-linux-gnu/bits/posix_opt.h:
+
+/usr/include/unistd.h:
+
+/usr/include/x86_64-linux-gnu/sys/time.h:
 
 /usr/lib/gcc/x86_64-linux-gnu/12/include/stdbool.h:
 
@@ -421,9 +431,9 @@ CMakeFiles/ppcbs.dir/ppcbs.c.o: /home/jan/katalog/SIK/projekt1/ppcbs.c \
 
 /usr/include/features-time64.h:
 
-/usr/include/x86_64-linux-gnu/bits/getopt_core.h:
-
 /home/jan/katalog/SIK/projekt1/ppcbs.c:
+
+/usr/include/x86_64-linux-gnu/bits/getopt_core.h:
 
 /usr/include/x86_64-linux-gnu/asm/socket.h:
 
@@ -495,11 +505,11 @@ CMakeFiles/ppcbs.dir/ppcbs.c.o: /home/jan/katalog/SIK/projekt1/ppcbs.c \
 
 /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h:
 
-/usr/include/x86_64-linux-gnu/bits/getopt_posix.h:
-
 /usr/include/stdio.h:
 
 /usr/lib/gcc/x86_64-linux-gnu/12/include/stdnoreturn.h:
+
+/usr/include/x86_64-linux-gnu/bits/getopt_posix.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/__locale_t.h:
 

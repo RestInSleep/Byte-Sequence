@@ -83,6 +83,14 @@ CMakeFiles/ppcbs.dir/common.c.o
  /usr/include/asm-generic/sockios.h
  /usr/include/x86_64-linux-gnu/bits/types/struct_osockaddr.h
  /usr/include/x86_64-linux-gnu/bits/in.h
+ /usr/include/x86_64-linux-gnu/sys/time.h
+ /usr/include/unistd.h
+ /usr/include/x86_64-linux-gnu/bits/posix_opt.h
+ /usr/include/x86_64-linux-gnu/bits/environments.h
+ /usr/include/x86_64-linux-gnu/bits/confname.h
+ /usr/include/x86_64-linux-gnu/bits/getopt_posix.h
+ /usr/include/x86_64-linux-gnu/bits/getopt_core.h
+ /usr/include/x86_64-linux-gnu/bits/unistd_ext.h
  /home/jan/katalog/SIK/projekt1/common.h
  /home/jan/katalog/SIK/projekt1/err.h
  /usr/lib/gcc/x86_64-linux-gnu/12/include/stdnoreturn.h

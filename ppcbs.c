@@ -39,11 +39,11 @@ int udp_receive_conn(int socket_fd, struct conn *connection, struct sockaddr_in 
                                (struct sockaddr *) client_address, &address_length);
     if (received_length < 0) {
         fprintf(stderr, "Did not receive connection.\n");
-        return 0;
+        return -1;
     }
     if (received_length != sizeof(struct conn)) {
-        fprintf(stderr, "received_length != sizeof(struct conn)");
-        return 0;
+        fprintf(stderr, "received_length != sizeof(struct conn) in function udp_receive_conn.");
+        return -1;
     }
     if (connection->meta.packet_type_id != 1) {
         if (connection->meta.packet_type_id == 4) {
@@ -51,15 +51,15 @@ int udp_receive_conn(int socket_fd, struct conn *connection, struct sockaddr_in 
             udp_send_rjt(client_address, data, socket_fd);
         }
         fprintf(stderr, "Server expects connection packet first!\n");
-        return 0;
+        return -1;
     }
     if (connection->protocol_id == 1) {
         fprintf(stderr, "Incoming tcp connection to udp server!\n");
-        return 0;
+        return -1;
     }
     if (connection->protocol_id != 2 && connection->protocol_id != 3) {
-        fprintf(stderr, "unknown connection to udp server!\n");
-        return 0;
+        fprintf(stderr, "Unknown connection to udp server!\n");
+        return -1;
     }
     return 1;
 }
@@ -73,6 +73,24 @@ ssize_t udp_send_con_acc(int socket_fd, struct sockaddr_in *client_address, uint
    return sent;
 }
 
+ssize_t udp_send_con_rjt(int socket_fd, struct sockaddr_in *client_address, uint64_t session_id) {
+    struct con_rjt con_rjt;
+    init_con_rjt(&con_rjt, session_id);
+    int flags = 0;
+    ssize_t sent = sendto(socket_fd, &con_rjt, sizeof(struct con_rjt), flags,
+                          (struct sockaddr *) client_address, (socklen_t) sizeof(*client_address));
+    return sent;
+}
+
+/*
+ * 1 - everything is ok
+ * 0 - something wrong, but client should be still served
+ * -1 - something wrong, connection should be closed
+ * -2 - timeout - connection should be closed if udp, if udpr then retransmit
+ * -3 - received packet which had already been received - if udp, then close connection,
+ *  if udpr then continue
+ *
+ */
 int udp_receive_data_packet(int socket_fd, struct data *data, uint64_t session_id, uint64_t *currently_received, uint64_t *expected_packet_number) {
     ssize_t received_length;
     int flags = 0;
@@ -82,41 +100,55 @@ int udp_receive_data_packet(int socket_fd, struct data *data, uint64_t session_i
                                (struct sockaddr *) &incoming_address, &address_length);
     if (received_length < 0) {
         if (errno == EAGAIN) {
-            fprintf(stderr, "timeout\n");
+            fprintf(stderr, "Timeout!\n");
+            return -2;
         } else {
-        fprintf(stderr, "recvfrom failed\n");
+        fprintf(stderr, "recvfrom failed in function udp_receive_data_packet.\n");
         }
         return -1;
     }
-    if (data->meta.packet_type_id != 4) {
-        fprintf(stderr, "server expects data packet!\n");
+
+    if (be64toh(data->meta.session_id) != session_id) {
+        if (data->meta.packet_type_id == 1) {
+            struct conn *connection = (struct conn *) data;
+            fprintf(stderr, "Already serving a connection!\n");
+            udp_send_con_rjt(socket_fd, &incoming_address, be64toh(connection->meta.session_id));
+        } else if (data->meta.packet_type_id == 4) {
+            fprintf(stderr, "Data with wrong session_id!\n");
+            udp_send_rjt(&incoming_address, data, socket_fd);
+        }
         return 0;
     }
-    if (be64toh(data->meta.session_id) != session_id) {
-        fprintf(stderr, "data with wrong session_id!\n");
-        udp_send_rjt(&incoming_address, data, socket_fd);
+
+    if (data->meta.packet_type_id != 4) {
+        fprintf(stderr, "Server expects data packet!\n");
+        if (data->meta.packet_type_id == 1) {
+           fprintf(stderr, "Received connection packet which had already been received.\n");
+           return -3;
+        }
+        return -1;
     }
+
     if((uint32_t)received_length != sizeof(struct data) + be32toh(data->net_packet_bytes)) {
-        fprintf(stderr, "received_length != sizeof(struct data) + be32toh(data->net_packet_bytes)\n");
+        fprintf(stderr, "Received_length != sizeof(struct data) + be32toh(data->net_packet_bytes).\n");
         udp_send_rjt(&incoming_address, data, socket_fd);
         return -1;
     }
+
     if (be64toh(data->net_packet_number) != *expected_packet_number) {
         if (be64toh(data->net_packet_number) < *expected_packet_number) {
-            fprintf(stderr, "received data packet with number %" PRIu64 " which was already received\n", be64toh(data->net_packet_number));
-
-            return -1;
+            fprintf(stderr, "Received data packet with number %" PRIu64 " which had already been received.\n", be64toh(data->net_packet_number));
+            return -3;
         }
-
-        fprintf(stderr, "wrong packet number! %lu \n", be64toh(data->net_packet_number));
+        fprintf(stderr, "Wrong packet number %lu! \n", be64toh(data->net_packet_number));
         udp_send_rjt(&incoming_address, data, socket_fd);
         return -1;
     }
-    fprintf(stderr, "received data packet with number %" PRIu64 "\n", be64toh(data->net_packet_number));
-    fprintf(stderr, "received data packet with size %" PRIu32 "\n", be32toh(data->net_packet_bytes));
+    fprintf(stderr, "Received data packet with number %lu \n", *expected_packet_number);
+    fprintf(stderr, "Received data packet with size %." PRIu32 "\n", be32toh(data->net_packet_bytes));
     ssize_t wrote = write(STDOUT_FILENO, data->data, be32toh(data->net_packet_bytes));
     if (wrote < 0) {
-        fprintf(stderr, "write failed\n");
+        fprintf(stderr, "Write failed.\n");
         return -1;
     }
     fflush(stdout);
@@ -158,13 +190,70 @@ static void udp_server_no_retransmit_recv(uint64_t session_id, struct sockaddr_i
     udp_send_rcvd(socket_fd, client_address, session_id);
 }
 
-
-static void udp_server_retransmit_recv(uint64_t session_id, struct sockaddr_in client_address,
-                                       uint64_t sequence_length, int socket_fd, char *buffer) {
+int udp_send_acc(int socket_fd, struct sockaddr_in *client_address, uint64_t expected_packet_number, uint64_t session_id) {
+    struct acc acc;
+    init_acc(&acc, expected_packet_number, session_id);
+    int flags = 0;
+    ssize_t sent = sendto(socket_fd, &acc, sizeof(struct acc), flags,
+                          (struct sockaddr *) client_address, (socklen_t) sizeof(*client_address));
+    if (sent < 0) {
+        fprintf(stderr, "Client has not received acceptance of data packet.\n");
+        return -1;
+    }
+    else if (sent != sizeof(struct acc)) {
+        fprintf(stderr, "partial / failed write\n");
+        return -1;
+    }
+    return 1;
 }
 
 
 
+
+
+static void udp_server_retransmit_recv(uint64_t session_id, struct sockaddr_in client_address,
+                                       uint64_t sequence_length, int socket_fd, char *buffer) {
+
+    /*
+     * send con_acc
+     * receive data
+     * send acc
+     */
+    uint64_t expected_packet_number = 0;
+    uint64_t currently_received = 0;
+    int current_retransmissions = 0;
+
+    udp_send_con_acc(socket_fd, &client_address, session_id);
+    while(currently_received < sequence_length) {
+       int result =  udp_receive_data_packet(socket_fd, (struct data *) buffer, session_id, &currently_received, &expected_packet_number);
+       if (result == -1) {
+           fprintf(stderr, "data could not be received, closing connection...\n");
+           return;
+       }
+       if (result == -3) {
+           continue;
+       }
+       if (result == 1) {
+           sleep(2);
+           udp_send_acc(socket_fd, &client_address, expected_packet_number - 1, session_id);
+           current_retransmissions = 0;
+       }
+       if (result == -2) {
+           if (current_retransmissions == MAX_RETRANSMITS) {
+               fprintf(stderr, "too many retransmissions, closing connection...\n");
+               return;
+           }
+           if (expected_packet_number == 0) {
+               udp_send_con_acc(socket_fd, &client_address, session_id);
+           }
+           else {
+               udp_send_acc(socket_fd, &client_address, expected_packet_number - 1, session_id);
+           }
+              current_retransmissions++;
+         }
+    }
+    udp_send_rcvd(socket_fd, &client_address, session_id);
+}
 
 
 static void udp_server_run(uint16_t port, char *receive_buffer) {
@@ -179,7 +268,7 @@ static void udp_server_run(uint16_t port, char *receive_buffer) {
     while (true) {
         struct conn connection;
         struct sockaddr_in client_address;
-        if (!udp_receive_conn(socket_fd, &connection, &client_address)) {
+        if (udp_receive_conn(socket_fd, &connection, &client_address) < 0) {
             continue;
         }
         fprintf(stderr, "received connection\n");
@@ -190,9 +279,9 @@ static void udp_server_run(uint16_t port, char *receive_buffer) {
         if (protocol_id == 2) {
             udp_server_no_retransmit_recv(session_id, &client_address, sequence_length, socket_fd, receive_buffer);
         } else if (protocol_id == 3) {
+            fprintf(stderr, "retransmit\n");
             udp_server_retransmit_recv(session_id, client_address, sequence_length, socket_fd, receive_buffer);
-        }
-        else {
+        } else {
             fprintf(stderr, "unknown protocol!\n");
         }
     }
@@ -243,9 +332,9 @@ int tcp_send_con_acc(int client_fd, uint64_t session_id) {
 int tcp_send_rjt(int client_fd, uint64_t session_id, uint64_t packet_number) {
     struct rjt rjt;
     init_rjt(&rjt, packet_number, session_id);
-    ssize_t sent = writen(client_fd, &rjt, sizeof(struct con_rjt));
+    ssize_t sent = writen(client_fd, &rjt, sizeof(struct rjt));
     if (sent < 0) {
-        fprintf(stderr, "con_rjt could not be sent, closing connection...\n");
+        fprintf(stderr, "rjt could not be sent, closing connection...\n");
         return -1;
     }
     return 1;
@@ -378,7 +467,7 @@ void run_server(uint8_t protocol_type, uint16_t port) {
     if (protocol_type == 1) {
         tcp_server_run(port, receive_buffer);
     }
-    if (protocol_type == 2) {
+    if (protocol_type == 2 || protocol_type == 3) {
         udp_server_run(port, receive_buffer);
     }
 }

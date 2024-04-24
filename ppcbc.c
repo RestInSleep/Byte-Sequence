@@ -142,8 +142,8 @@ int udpr_recv_acc(int socket_fd, uint64_t session_id, uint64_t to_be_accepted) {
         }
         syserr("recvfrom");
     }
-    if (received == sizeof (struct con_acc)) {
-        if (acceptance.meta.packet_type_id != 5) {
+    if (received != sizeof (struct acc)) {
+        if (acceptance.meta.packet_type_id != 2) {
             fatal("expected acc/ con_acc packet");
         }
         if (be64toh(acceptance.meta.session_id) != session_id) {
@@ -152,7 +152,7 @@ int udpr_recv_acc(int socket_fd, uint64_t session_id, uint64_t to_be_accepted) {
         fprintf(stderr, "old con_acc received\n");
         return 0;
     }
-    if (received != sizeof(acceptance)) {
+    if (received != sizeof(struct acc)) {
         fatal("partial / failed read");
     }
     if (be64toh(acceptance.meta.session_id) != session_id) {
@@ -175,34 +175,36 @@ int udpr_recv_acc(int socket_fd, uint64_t session_id, uint64_t to_be_accepted) {
 void udpr_send_data_packet(size_t* sent_by_now, size_t full_size, int socket_fd, struct sockaddr_in *server_address, uint64_t session_id,
                       uint64_t *packet_number, char* data_to_send, struct data * data_packet) {
 
+    fprintf(stderr, "sending packet %" PRIu64 "\n", *packet_number);
     udp_send_data_packet(sent_by_now, full_size, socket_fd, server_address, session_id, packet_number, data_to_send, data_packet);
-    uint64_t to_be_accepted = *packet_number - 1;
+    // packet number is incremented in udp_send_data_packet
     size_t to_send_in_this_packet = full_size - *sent_by_now >= MAX_PACKET_SIZE ? MAX_PACKET_SIZE : full_size - *sent_by_now;
     int current_retransmits = 0;
-
     while (current_retransmits < MAX_RETRANSMITS) {
-        int received = udpr_recv_acc(socket_fd, session_id, to_be_accepted);
+        int received = udpr_recv_acc(socket_fd, session_id, *packet_number - 1);
         if (received == 1) { // we received correct accept packet
+           fprintf(stderr, "received acc packet for %lu\n", *packet_number - 1);
             return;
         } else if (received == 0) { // we already received such an accept packet
             continue;
         } else { // timeouted
             current_retransmits += 1;
             fprintf(stderr, "%d. retransmitting packet %" PRIu64 "\n", current_retransmits, *packet_number - 1);
-            *packet_number -= 1;
             *sent_by_now -= to_send_in_this_packet;
-            udp_send_data_packet(sent_by_now, full_size, socket_fd, server_address, session_id, &to_be_accepted, data_to_send, data_packet);
+            *packet_number -= 1;
+            udp_send_data_packet(sent_by_now, full_size, socket_fd, server_address, session_id, packet_number, data_to_send, data_packet);
         }
     }
     fatal("too many retransmits!");
 }
 
-void udp_receive_rjt_or_rcvd(int socket_fd, uint64_t session_id) {
+int udp_receive_rjt_or_rcvd(int socket_fd, uint64_t session_id) {
     struct rjt rejection;
     ssize_t received = recvfrom(socket_fd, &rejection, sizeof(rejection), 0, NULL, NULL);
     if (received < 0) {
         if (errno == EAGAIN) {
-            fatal(" rcvd timeout!");
+            fprintf(stderr, "timeout!\n");
+            return -1;
         }
         syserr("recvfrom");
     }
@@ -210,13 +212,14 @@ void udp_receive_rjt_or_rcvd(int socket_fd, uint64_t session_id) {
         if (be64toh(rejection.meta.session_id) != session_id) {
             fatal("session_id mismatch");
         }
-        fatal("received rjt packet");
+        fatal("received rjt packet with packet_number %" PRIu64, be64toh(rejection.net_packet_number));
     }
     else if (rejection.meta.packet_type_id == 7) {
         if (be64toh(rejection.meta.session_id) != session_id) {
             fatal("session_id mismatch");
         }
         fprintf(stderr, "received rcvd packet\n");
+        return 1;
     }
     else {
         if (be64toh(rejection.meta.session_id) != session_id) {
@@ -225,8 +228,6 @@ void udp_receive_rjt_or_rcvd(int socket_fd, uint64_t session_id) {
         fatal("expected rjt or rcvd packet");
     }
 }
-
-
 
 static struct sockaddr_in get_server_address(char const *host, uint16_t port, uint8_t protocol_id) {
     struct addrinfo hints;
@@ -278,12 +279,12 @@ void run_client_udp(char const* host, uint16_t port, char* data_to_send, size_t 
     struct data* data_packet = malloc(sizeof(struct data) + MAX_PACKET_SIZE);
     while (sent_by_now < full_size) {
         udp_send_data_packet(&sent_by_now, full_size, socket_fd, &server_address, session_id, &packet_number, data_to_send, data_packet);
-        usleep(500);
     }
-    udp_receive_rjt_or_rcvd(socket_fd, session_id);
+    if (udp_receive_rjt_or_rcvd(socket_fd, session_id) < 0) {
+        fatal("timeout!");
+    }
     free(data_packet);
 }
-
 
 
 void run_client_udpr(char const* host, uint16_t port, char* data_to_send, size_t full_size) {
@@ -301,7 +302,6 @@ void run_client_udpr(char const* host, uint16_t port, char* data_to_send, size_t
     struct data* data_packet = malloc(sizeof(struct data) + MAX_PACKET_SIZE);
     while (sent_by_now < full_size) {
         udpr_send_data_packet(&sent_by_now, full_size, socket_fd, &server_address, session_id, &packet_number, data_to_send, data_packet);
-        usleep(500);
     }
     free(data_packet);
     // here, every packet was accepted. now we need to receive rcvd packet
@@ -342,7 +342,6 @@ void tcp_receive_con_acc(int socket_fd, uint64_t session_id) {
     if (be64toh(con_acc.meta.session_id) != session_id) {
         fatal("session_id mismatch");
     }
-
 }
 
 void tcp_send_data_packet(int socket_fd, size_t* sent_by_now, size_t full_size, uint64_t session_id, uint64_t* packet_number, char* data_to_send,
@@ -448,5 +447,4 @@ int main (int argc, char *argv[]) {
     }
     run_client(read_protocol(argv[1]), argv[2], read_port(argv[3]));
     return 0;
-
 }
